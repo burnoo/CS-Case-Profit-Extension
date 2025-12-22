@@ -28,18 +28,22 @@ const PricingService = {
             return this.prices;
         }
 
-        // Fetch fresh data
-        console.log('[CSP Pricing] Fetching fresh CSGOTrader prices...');
+        // Fetch fresh data via background script (avoids CORS issues)
+        console.log('[CSP Pricing] Fetching fresh CSGOTrader prices via background...');
         try {
-            const response = await fetch(this.CSGOTRADER_URL);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
+            const result = await chrome.runtime.sendMessage({
+                type: 'FETCH_URL',
+                url: this.CSGOTRADER_URL
+            });
+
+            if (!result.success) {
+                throw new Error(result.error || 'Unknown error');
             }
-            const data = await response.json();
-            this.prices = data;
+
+            this.prices = result.data;
 
             // Cache the data
-            await CacheService.setWithExpiry(this.CACHE_KEY, data);
+            await CacheService.setWithExpiry(this.CACHE_KEY, this.prices);
             console.log('[CSP Pricing] CSGOTrader prices cached');
 
             return this.prices;
