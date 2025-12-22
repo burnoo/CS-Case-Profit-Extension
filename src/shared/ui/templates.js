@@ -119,7 +119,7 @@ const Templates = {
     },
 
     /**
-     * Build item name HTML with StatTrak and wear styling
+     * Build item name HTML with StatTrak, wear, and phase styling
      * @param {Object} item - Item data
      * @returns {string}
      */
@@ -127,7 +127,8 @@ const Templates = {
         const stPrefix = item.isStattrak ? '<span class="csp-stattrak">StatTrak™</span> ' : '';
         const wearClass = item.wear ? `csp-wear-${item.wear.toLowerCase()}` : '';
         const wearPart = item.wearFull ? ` <span class="${wearClass}">(${item.wearFull})</span>` : '';
-        return `${stPrefix}${Helpers.escapeHtml(item.weaponName)} | ${Helpers.escapeHtml(item.skinName)}${wearPart}`;
+        const phasePart = item.phase ? ` <span class="csp-phase">${Helpers.escapeHtml(item.phase)}</span>` : '';
+        return `${stPrefix}${Helpers.escapeHtml(item.weaponName)} | ${Helpers.escapeHtml(item.skinName)}${wearPart}${phasePart}`;
     },
 
     /**

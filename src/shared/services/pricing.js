@@ -77,15 +77,61 @@ const PricingService = {
      * @param {string} exterior - Exterior/wear
      * @param {boolean} isStattrak - Whether item is StatTrak
      * @param {string} [marketHashName] - Optional direct market hash name (used for stickers, etc.)
+     * @param {string} [phase] - Doppler phase (e.g., "Phase 1", "Ruby", "Sapphire", "Emerald", "Black Pearl")
      * @returns {number|null} - Price in USD or null if not found
      */
-    getRealPrice(weaponName, skinName, exterior, isStattrak, marketHashName) {
+    getRealPrice(weaponName, skinName, exterior, isStattrak, marketHashName, phase) {
         if (!this.prices) return null;
+
         // Use provided market hash name directly, or build from parts
-        const hashName = marketHashName || this.getMarketHashName(weaponName, skinName, exterior, isStattrak);
+        let hashName = marketHashName || this.getMarketHashName(weaponName, skinName, exterior, isStattrak);
+
+        // If phase is provided, strip it from the hash name for lookup
+        // Market hash names from sites may include phase like "★ Gut Knife | Doppler (Factory New) Phase 2"
+        // But csgotrader uses "★ Gut Knife | Doppler (Factory New)" with a nested doppler object
+        if (phase) {
+            hashName = this.stripPhaseFromHashName(hashName);
+        }
+
         const item = this.prices[hashName];
-        if (!item || item.price === null || item.price === undefined) return null;
+        if (!item) return null;
+
+        // Check if this is a Doppler with phase pricing
+        if (item.doppler && phase) {
+            const dopplerPrice = item.doppler[phase];
+            if (dopplerPrice !== null && dopplerPrice !== undefined) {
+                return dopplerPrice;
+            }
+            return null;
+        }
+
+        // Regular price lookup
+        if (item.price === null || item.price === undefined) return null;
         return item.price;
+    },
+
+    /**
+     * Strip phase suffix from market hash name
+     * @param {string} hashName - Market hash name possibly containing phase
+     * @returns {string} - Market hash name without phase suffix
+     */
+    stripPhaseFromHashName(hashName) {
+        // Remove phase suffixes like " Phase 1", " Phase 2", " Ruby", " Sapphire", " Emerald", " Black Pearl"
+        const phasePatterns = [
+            / Phase \d$/,
+            / Ruby$/,
+            / Sapphire$/,
+            / Emerald$/,
+            / Black Pearl$/
+        ];
+
+        for (const pattern of phasePatterns) {
+            if (pattern.test(hashName)) {
+                return hashName.replace(pattern, '');
+            }
+        }
+
+        return hashName;
     },
 
     /**

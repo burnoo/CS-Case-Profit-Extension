@@ -31,8 +31,11 @@ const KeyDropParser = {
                 const wear = this.normalizeWear(wearData.rarity || '');
                 const wearFull = this.getFullWear(wearData.rarity || '');
 
-                // Build market hash name
-                const marketHashName = this.buildMarketHashName(item.fullTitle, wearFull);
+                // Extract phase from fullTitle if it's a Doppler
+                const phase = this.extractPhase(item.fullTitle);
+
+                // Build market hash name (including phase if present)
+                const marketHashName = this.buildMarketHashName(item.fullTitle, wearFull, phase);
 
                 items.push({
                     id: `${item.id}_${wearData.rarity}`,
@@ -45,7 +48,8 @@ const KeyDropParser = {
                     odds: wearData.odds || 0,
                     image: item.icon || '',
                     rarity: this.mapColorToRarity(item.color || ''),
-                    marketHashName: marketHashName
+                    marketHashName: marketHashName,
+                    phase: phase
                 });
             });
         });
@@ -59,15 +63,59 @@ const KeyDropParser = {
     },
 
     /**
-     * Build market hash name from full title and wear
+     * Build market hash name from full title, wear, and phase
      * @param {string} fullTitle - Full item title like "M4A1-S | Printstream"
      * @param {string} wearFull - Full wear condition
+     * @param {string|null} phase - Doppler phase if applicable
      * @returns {string} - Market hash name
      */
-    buildMarketHashName(fullTitle, wearFull) {
+    buildMarketHashName(fullTitle, wearFull, phase) {
         if (!fullTitle) return '';
-        if (!wearFull) return fullTitle.trim();
-        return `${fullTitle.trim()} (${wearFull})`;
+
+        let hashName = fullTitle.trim();
+
+        if (wearFull) {
+            hashName = `${hashName} (${wearFull})`;
+        }
+
+        // Add phase suffix for Dopplers (e.g., "★ Gut Knife | Doppler (Factory New) Phase 2")
+        if (phase) {
+            hashName = `${hashName} ${phase}`;
+        }
+
+        return hashName;
+    },
+
+    /**
+     * Extract Doppler phase from full title
+     * @param {string} fullTitle - Full item title
+     * @returns {string|null} - Phase name or null
+     */
+    extractPhase(fullTitle) {
+        if (!fullTitle) return null;
+
+        // Check if it's a Doppler or Gamma Doppler
+        if (!fullTitle.includes('Doppler')) return null;
+
+        // Phase patterns to look for in the title
+        const phasePatterns = [
+            { pattern: /Phase 1/i, name: 'Phase 1' },
+            { pattern: /Phase 2/i, name: 'Phase 2' },
+            { pattern: /Phase 3/i, name: 'Phase 3' },
+            { pattern: /Phase 4/i, name: 'Phase 4' },
+            { pattern: /Ruby/i, name: 'Ruby' },
+            { pattern: /Sapphire/i, name: 'Sapphire' },
+            { pattern: /Emerald/i, name: 'Emerald' },
+            { pattern: /Black Pearl/i, name: 'Black Pearl' }
+        ];
+
+        for (const { pattern, name } of phasePatterns) {
+            if (pattern.test(fullTitle)) {
+                return name;
+            }
+        }
+
+        return null;
     },
 
     /**

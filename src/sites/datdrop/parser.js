@@ -35,6 +35,9 @@ const DatDropParser = {
             // Parse the item name to extract weapon and skin
             const { weaponName, skinName } = this.parseItemName(item.name, item.exterior);
 
+            // Extract phase for Doppler skins
+            const phase = this.extractPhase(item.name);
+
             // Calculate odds percentage (chance is out of 100,000)
             const odds = chanceData ? (chanceData.chance / 1000) : 0;
 
@@ -49,7 +52,8 @@ const DatDropParser = {
                 odds: odds,
                 image: this.buildImageUrl(item.image),
                 rarity: item.rarity || '',
-                marketHashName: item.name || ''
+                marketHashName: item.name || '',
+                phase: phase
             });
         });
 
@@ -126,6 +130,37 @@ const DatDropParser = {
         if (wearLower.includes('battle-scarred') || wearLower.includes('battle scarred') || wearLower === 'bs') return 'BS';
 
         return wear;
+    },
+
+    /**
+     * Extract Doppler phase from item name
+     * @param {string} itemName - Full item name
+     * @returns {string|null} - Phase name or null
+     */
+    extractPhase(itemName) {
+        if (!itemName) return null;
+
+        // Check if it's a Doppler or Gamma Doppler
+        if (!itemName.includes('Doppler')) return null;
+
+        const phasePatterns = [
+            { pattern: /Phase 1/i, name: 'Phase 1' },
+            { pattern: /Phase 2/i, name: 'Phase 2' },
+            { pattern: /Phase 3/i, name: 'Phase 3' },
+            { pattern: /Phase 4/i, name: 'Phase 4' },
+            { pattern: /Ruby/i, name: 'Ruby' },
+            { pattern: /Sapphire/i, name: 'Sapphire' },
+            { pattern: /Emerald/i, name: 'Emerald' },
+            { pattern: /Black Pearl/i, name: 'Black Pearl' }
+        ];
+
+        for (const { pattern, name } of phasePatterns) {
+            if (pattern.test(itemName)) {
+                return name;
+            }
+        }
+
+        return null;
     }
 };
 

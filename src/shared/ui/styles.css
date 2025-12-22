@@ -110,6 +110,12 @@
     font-weight: 600;
 }
 
+#csp-probability-box .csp-phase {
+    color: #60a5fa;
+    font-weight: 500;
+    font-style: italic;
+}
+
 #csp-probability-box .csp-wear-fn { color: #4ade80; }
 #csp-probability-box .csp-wear-mw { color: #a3e635; }
 #csp-probability-box .csp-wear-ft { color: #fbbf24; }

@@ -156,7 +156,8 @@ class ProbabilityBox {
                 item.skinName,
                 item.wearFull,
                 item.isStattrak,
-                item.marketHashName
+                item.marketHashName,
+                item.phase
             );
             return { ...item, realPrice };
         });
@@ -351,7 +352,8 @@ class ProbabilityBox {
         // Build item name
         const stPrefix = selectedItem.isStattrak ? 'StatTrak™ ' : '';
         const wearPart = selectedItem.wearFull ? ` (${selectedItem.wearFull})` : '';
-        const itemName = `${stPrefix}${selectedItem.weaponName} | ${selectedItem.skinName}${wearPart}`;
+        const phasePart = selectedItem.phase ? ` ${selectedItem.phase}` : '';
+        const itemName = `${stPrefix}${selectedItem.weaponName} | ${selectedItem.skinName}${wearPart}${phasePart}`;
 
         // Update UI
         const resultContainer = document.getElementById('csp-test-result');
