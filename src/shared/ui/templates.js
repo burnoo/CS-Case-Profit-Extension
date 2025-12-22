@@ -128,7 +128,11 @@ const Templates = {
         const wearClass = item.wear ? `csp-wear-${item.wear.toLowerCase()}` : '';
         const wearPart = item.wearFull ? ` <span class="${wearClass}">(${item.wearFull})</span>` : '';
         const phasePart = item.phase ? ` <span class="csp-phase">${Helpers.escapeHtml(item.phase)}</span>` : '';
-        return `${stPrefix}${Helpers.escapeHtml(item.weaponName)} | ${Helpers.escapeHtml(item.skinName)}${wearPart}${phasePart}`;
+        // Handle vanilla items (no skin name)
+        const namePart = item.skinName
+            ? `${Helpers.escapeHtml(item.weaponName)} | ${Helpers.escapeHtml(item.skinName)}`
+            : Helpers.escapeHtml(item.weaponName);
+        return `${stPrefix}${namePart}${wearPart}${phasePart}`;
     },
 
     /**

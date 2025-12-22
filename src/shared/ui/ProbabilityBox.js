@@ -349,11 +349,14 @@ class ProbabilityBox {
         const profit = selectedItem.price - casePrice;
         const multiplier = casePrice > 0 ? selectedItem.price / casePrice : 0;
 
-        // Build item name
+        // Build item name (handle vanilla items with no skin name)
         const stPrefix = selectedItem.isStattrak ? 'StatTrak™ ' : '';
         const wearPart = selectedItem.wearFull ? ` (${selectedItem.wearFull})` : '';
         const phasePart = selectedItem.phase ? ` ${selectedItem.phase}` : '';
-        const itemName = `${stPrefix}${selectedItem.weaponName} | ${selectedItem.skinName}${wearPart}${phasePart}`;
+        const namePart = selectedItem.skinName
+            ? `${selectedItem.weaponName} | ${selectedItem.skinName}`
+            : selectedItem.weaponName;
+        const itemName = `${stPrefix}${namePart}${wearPart}${phasePart}`;
 
         // Update UI
         const resultContainer = document.getElementById('csp-test-result');

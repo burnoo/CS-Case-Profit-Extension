@@ -11,7 +11,8 @@
         window.HellcaseAdapter,
         window.SkinClubAdapter,
         window.DatDropAdapter,
-        window.KeyDropAdapter
+        window.KeyDropAdapter,
+        window.CSGOEmpireAdapter
     ].filter(Boolean);
 
     /**

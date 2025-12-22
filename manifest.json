@@ -20,6 +20,8 @@
         "https://keydrop.com/*",
         "https://*.keydrop.com/*",
         "https://cdn.keydrop.com/*",
+        "https://csgoempire.com/*",
+        "https://*.csgoempire.com/*",
         "https://prices.csgotrader.app/*"
     ],
     "background": {
@@ -113,12 +115,34 @@
                 "src/shared/ui/styles.css"
             ],
             "run_at": "document_idle"
+        },
+        {
+            "matches": [
+                "https://csgoempire.com/*",
+                "https://*.csgoempire.com/*"
+            ],
+            "js": [
+                "src/shared/utils/helpers.js",
+                "src/shared/services/cache.js",
+                "src/shared/services/currency.js",
+                "src/shared/services/pricing.js",
+                "src/shared/ui/templates.js",
+                "src/shared/ui/ProbabilityBox.js",
+                "src/sites/csgoempire/parser.js",
+                "src/sites/csgoempire/api.js",
+                "src/sites/csgoempire/index.js",
+                "src/content.js"
+            ],
+            "css": [
+                "src/shared/ui/styles.css"
+            ],
+            "run_at": "document_idle"
         }
     ],
     "web_accessible_resources": [
         {
             "resources": ["icons/*"],
-            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*", "https://datdrop.com/*", "https://*.datdrop.com/*", "https://keydrop.com/*", "https://*.keydrop.com/*"]
+            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*", "https://datdrop.com/*", "https://*.datdrop.com/*", "https://keydrop.com/*", "https://*.keydrop.com/*", "https://csgoempire.com/*", "https://*.csgoempire.com/*"]
         }
     ]
 }
