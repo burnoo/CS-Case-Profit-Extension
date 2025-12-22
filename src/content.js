@@ -10,7 +10,8 @@
     const siteAdapters = [
         window.HellcaseAdapter,
         window.SkinClubAdapter,
-        window.DatDropAdapter
+        window.DatDropAdapter,
+        window.KeyDropAdapter
     ].filter(Boolean);
 
     /**

@@ -1,7 +1,7 @@
 /* CS Case Profit Extension - Shared Styles */
 
 #csp-probability-box {
-    background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.98) 100%);
+    background: linear-gradient(135deg, #1e1e28 0%, #14141e 100%);
     border: 1px solid rgba(255, 215, 0, 0.3);
     border-radius: 12px;
     padding: 16px;
@@ -10,6 +10,9 @@
     color: #e0e0e0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 100;
+    isolation: isolate;
 }
 
 #csp-probability-box .csp-header {
@@ -71,6 +74,7 @@
     width: 100%;
     border-collapse: collapse;
     font-size: 11px;
+    background: #14141e;
 }
 
 #csp-probability-box .csp-items-table th {
@@ -142,6 +146,9 @@
     max-height: 500px;
     overflow-y: auto;
     display: none;
+    background: #14141e;
+    border-radius: 8px;
+    padding: 8px;
 }
 
 #csp-probability-box .csp-items-container.expanded {
@@ -313,7 +320,8 @@
     width: 150px;
     height: 150px;
     object-fit: contain;
-    margin-bottom: 12px;
+    margin: 0 auto 12px auto;
+    display: block;
 }
 
 #csp-probability-box .csp-test-result-image.csp-animate {
