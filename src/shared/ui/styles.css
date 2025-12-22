@@ -1,0 +1,365 @@
+/* CS Case Profit Extension - Shared Styles */
+
+#csp-probability-box {
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.95) 0%, rgba(20, 20, 30, 0.98) 100%);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px auto;
+    max-width: 1000px;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+#csp-probability-box .csp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+#csp-probability-box .csp-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffd700;
+}
+
+#csp-probability-box .csp-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+#csp-probability-box .csp-stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+#csp-probability-box .csp-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: #4ade80;
+}
+
+#csp-probability-box .csp-stat-value.negative {
+    color: #f87171;
+}
+
+#csp-probability-box .csp-stat-value.neutral {
+    color: #fbbf24;
+}
+
+#csp-probability-box .csp-stat-value.white {
+    color: #ffffff;
+}
+
+#csp-probability-box .csp-stat-label {
+    font-size: 10px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+#csp-probability-box .csp-items-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+#csp-probability-box .csp-items-table th {
+    background: rgba(255, 215, 0, 0.1);
+    padding: 8px 4px;
+    text-align: left;
+    font-weight: 600;
+    color: #ffd700;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+    font-size: 10px;
+    white-space: nowrap;
+}
+
+#csp-probability-box .csp-items-table td {
+    padding: 5px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#csp-probability-box .csp-items-table tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+#csp-probability-box .csp-items-table tr.csp-profit-row {
+    background: rgba(74, 222, 128, 0.05);
+}
+
+#csp-probability-box .csp-items-table tr.csp-loss-row {
+    background: rgba(248, 113, 113, 0.03);
+}
+
+#csp-probability-box .csp-stattrak {
+    color: #cf6a32;
+    font-weight: 600;
+}
+
+#csp-probability-box .csp-wear-fn { color: #4ade80; }
+#csp-probability-box .csp-wear-mw { color: #a3e635; }
+#csp-probability-box .csp-wear-ft { color: #fbbf24; }
+#csp-probability-box .csp-wear-ww { color: #fb923c; }
+#csp-probability-box .csp-wear-bs { color: #f87171; }
+
+#csp-probability-box .csp-toggle-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 8px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#csp-probability-box .csp-toggle-btn:hover {
+    color: #ffd700;
+}
+
+#csp-probability-box .csp-toggle-arrow {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+#csp-probability-box .csp-toggle-arrow.expanded {
+    transform: rotate(180deg);
+}
+
+#csp-probability-box .csp-items-container {
+    max-height: 500px;
+    overflow-y: auto;
+    display: none;
+}
+
+#csp-probability-box .csp-items-container.expanded {
+    display: block;
+}
+
+#csp-probability-box .csp-items-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+#csp-probability-box .csp-items-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+#csp-probability-box .csp-items-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.3);
+    border-radius: 3px;
+}
+
+#csp-probability-box .csp-loading {
+    text-align: center;
+    padding: 20px;
+    color: #9ca3af;
+}
+
+#csp-probability-box .csp-error {
+    text-align: center;
+    padding: 20px;
+    color: #f87171;
+}
+
+#csp-probability-box .csp-item-name {
+    font-weight: 600;
+    color: #fff;
+}
+
+#csp-probability-box .csp-profit {
+    color: #4ade80;
+}
+
+#csp-probability-box .csp-loss {
+    color: #f87171;
+}
+
+#csp-probability-box .csp-real-price-sub {
+    font-size: 12px;
+    color: #d0d0d0;
+    margin-top: -1px;
+}
+
+#csp-probability-box .csp-tooltip {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 2px;
+    cursor: help;
+    position: relative;
+}
+
+#csp-probability-box .csp-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 4px;
+}
+
+#csp-probability-box .csp-tooltip:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+}
+
+#csp-probability-box .csp-items-table th.csp-tooltip,
+#csp-probability-box .csp-items-table td .csp-tooltip {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-decoration-color: rgba(255, 215, 0, 0.5);
+}
+
+#csp-probability-box .csp-items-table th.csp-tooltip {
+    position: relative;
+    overflow: visible;
+}
+
+/* Table header tooltip appears below instead of above */
+#csp-probability-box .csp-items-table th.csp-tooltip:hover::after {
+    bottom: auto;
+    top: 100%;
+    margin-top: 4px;
+    margin-bottom: 0;
+}
+
+#csp-probability-box .csp-items-table th.csp-tooltip:hover::before {
+    bottom: auto;
+    top: 100%;
+    border-top-color: transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.9);
+}
+
+#csp-probability-box .csp-test-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+#csp-probability-box .csp-test-btn {
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: block;
+    margin: 0 auto;
+}
+
+#csp-probability-box .csp-test-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+#csp-probability-box .csp-test-btn:active {
+    transform: scale(0.98);
+}
+
+#csp-probability-box .csp-test-result {
+    display: none;
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    text-align: center;
+    position: relative;
+}
+
+#csp-probability-box .csp-test-result.visible {
+    display: block;
+}
+
+#csp-probability-box .csp-test-result-image {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 12px;
+}
+
+#csp-probability-box .csp-test-result-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+#csp-probability-box .csp-test-result-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 12px;
+}
+
+#csp-probability-box .csp-test-result-stat {
+    text-align: center;
+}
+
+#csp-probability-box .csp-test-result-stat-value {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+#csp-probability-box .csp-test-result-stat-label {
+    font-size: 10px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+#csp-probability-box .csp-test-result-multiplier {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+#csp-probability-box .csp-test-result-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+#csp-probability-box .csp-test-result-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+}

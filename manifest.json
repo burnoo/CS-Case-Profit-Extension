@@ -1,0 +1,48 @@
+{
+    "manifest_version": 3,
+    "name": "CS Case Profit",
+    "version": "1.0.0",
+    "description": "Shows probability info, real prices, and profit calculations for CS case opening sites",
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://hellcase.com/*",
+        "https://*.hellcase.com/*",
+        "https://api.hellcase.com/*",
+        "https://prices.csgotrader.app/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://hellcase.com/*",
+                "https://*.hellcase.com/*"
+            ],
+            "js": [
+                "src/shared/utils/helpers.js",
+                "src/shared/services/cache.js",
+                "src/shared/services/currency.js",
+                "src/shared/services/pricing.js",
+                "src/shared/ui/templates.js",
+                "src/shared/ui/ProbabilityBox.js",
+                "src/sites/hellcase/parser.js",
+                "src/sites/hellcase/api.js",
+                "src/sites/hellcase/index.js",
+                "src/content.js"
+            ],
+            "css": [
+                "src/shared/ui/styles.css"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["icons/*"],
+            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*"]
+        }
+    ]
+}
