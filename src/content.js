@@ -12,7 +12,8 @@
         window.SkinClubAdapter,
         window.DatDropAdapter,
         window.KeyDropAdapter,
-        window.CSGOEmpireAdapter
+        window.CSGOEmpireAdapter,
+        window.CSGO500Adapter
     ].filter(Boolean);
 
     /**
