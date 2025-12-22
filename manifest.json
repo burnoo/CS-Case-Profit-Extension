@@ -10,6 +10,10 @@
         "https://hellcase.com/*",
         "https://*.hellcase.com/*",
         "https://api.hellcase.com/*",
+        "https://skin.club/*",
+        "https://*.skin.club/*",
+        "https://gate.skin.club/*",
+        "https://cfdn.skin.club/*",
         "https://prices.csgotrader.app/*"
     ],
     "background": {
@@ -37,12 +41,34 @@
                 "src/shared/ui/styles.css"
             ],
             "run_at": "document_idle"
+        },
+        {
+            "matches": [
+                "https://skin.club/*",
+                "https://*.skin.club/*"
+            ],
+            "js": [
+                "src/shared/utils/helpers.js",
+                "src/shared/services/cache.js",
+                "src/shared/services/currency.js",
+                "src/shared/services/pricing.js",
+                "src/shared/ui/templates.js",
+                "src/shared/ui/ProbabilityBox.js",
+                "src/sites/skinclub/parser.js",
+                "src/sites/skinclub/api.js",
+                "src/sites/skinclub/index.js",
+                "src/content.js"
+            ],
+            "css": [
+                "src/shared/ui/styles.css"
+            ],
+            "run_at": "document_idle"
         }
     ],
     "web_accessible_resources": [
         {
             "resources": ["icons/*"],
-            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*"]
+            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*"]
         }
     ]
 }

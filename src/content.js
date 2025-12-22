@@ -8,11 +8,11 @@
 
     // Registry of all site adapters
     const siteAdapters = [
-        HellcaseAdapter
+        window.HellcaseAdapter,
+        window.SkinClubAdapter
         // Add more adapters here as they are implemented:
-        // SkinClubAdapter,
         // KeyDropAdapter,
-    ];
+    ].filter(Boolean);
 
     /**
      * Find the appropriate adapter for the current site
