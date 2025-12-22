@@ -64,14 +64,16 @@ const CSGO500Parser = {
             const wear = (details.shortExterior || '').toUpperCase();
             const wearFull = details.exterior || '';
 
-            // Market hash name - use fullName if available
-            const marketHashName = details.fullName || this.buildMarketHashName(
-                weaponName,
-                cleanSkinName,
-                wearFull,
-                false, // No StatTrak info in basic response
-                phase
-            );
+            // Market hash name - use fullName if available (cleaned of garbage suffix)
+            const marketHashName = details.fullName
+                ? this.cleanFullName(details.fullName)
+                : this.buildMarketHashName(
+                    weaponName,
+                    cleanSkinName,
+                    wearFull,
+                    false, // No StatTrak info in basic response
+                    phase
+                );
 
             return {
                 id: item._id || `csgo500-${idx}`,
@@ -161,6 +163,20 @@ const CSGO500Parser = {
 
         return skinName
             .replace(/\s*-\s*(Phase \d|Ruby|Sapphire|Emerald|Black Pearl)$/i, '')
+            .trim();
+    },
+
+    /**
+     * Clean fullName by removing garbage suffix added by CSGO500 API
+     * The API appends " StatTrak Stat Trak" to StatTrak item names
+     * @param {string} fullName - Full item name from API
+     * @returns {string} - Cleaned name
+     */
+    cleanFullName(fullName) {
+        if (!fullName) return '';
+
+        return fullName
+            .replace(/\s+StatTrak\s+Stat\s*Trak$/i, '')
             .trim();
     },
 
