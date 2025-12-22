@@ -47,7 +47,7 @@ const Templates = {
                     <button class="csp-test-result-close" id="csp-test-result-close">✕</button>
                     <img class="csp-test-result-image" id="csp-test-result-image" src="" alt="Item">
                     <div class="csp-test-result-name" id="csp-test-result-name"></div>
-                    <div class="csp-test-result-stats">
+                    <div class="csp-test-result-stats" id="csp-test-result-stats">
                         <div class="csp-test-result-stat">
                             <div class="csp-test-result-stat-value" id="csp-test-result-price"></div>
                             <div class="csp-test-result-stat-label">Item Value</div>

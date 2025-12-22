@@ -359,8 +359,18 @@ class ProbabilityBox {
         const priceEl = document.getElementById('csp-test-result-price');
         const profitEl = document.getElementById('csp-test-result-profit');
         const multiplierEl = document.getElementById('csp-test-result-multiplier');
+        const statsEl = document.getElementById('csp-test-result-stats');
 
         resultContainer.classList.add('visible');
+
+        // Animate image, name and stats
+        imageEl.classList.remove('csp-animate');
+        nameEl.classList.remove('csp-animate');
+        statsEl.classList.remove('csp-animate');
+        void imageEl.offsetWidth; // Force reflow
+        imageEl.classList.add('csp-animate');
+        nameEl.classList.add('csp-animate');
+        statsEl.classList.add('csp-animate');
         imageEl.src = selectedItem.image;
         nameEl.textContent = itemName;
         priceEl.textContent = CurrencyService.formatPrice(selectedItem.price, this.userCurrency);
