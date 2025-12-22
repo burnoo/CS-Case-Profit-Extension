@@ -155,7 +155,8 @@ class ProbabilityBox {
                 item.weaponName,
                 item.skinName,
                 item.wearFull,
-                item.isStattrak
+                item.isStattrak,
+                item.marketHashName
             );
             return { ...item, realPrice };
         });

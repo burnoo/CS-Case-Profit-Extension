@@ -76,11 +76,13 @@ const PricingService = {
      * @param {string} skinName - Skin name
      * @param {string} exterior - Exterior/wear
      * @param {boolean} isStattrak - Whether item is StatTrak
+     * @param {string} [marketHashName] - Optional direct market hash name (used for stickers, etc.)
      * @returns {number|null} - Price in USD or null if not found
      */
-    getRealPrice(weaponName, skinName, exterior, isStattrak) {
+    getRealPrice(weaponName, skinName, exterior, isStattrak, marketHashName) {
         if (!this.prices) return null;
-        const hashName = this.getMarketHashName(weaponName, skinName, exterior, isStattrak);
+        // Use provided market hash name directly, or build from parts
+        const hashName = marketHashName || this.getMarketHashName(weaponName, skinName, exterior, isStattrak);
         const item = this.prices[hashName];
         if (!item || item.price === null || item.price === undefined) return null;
         return item.price;
