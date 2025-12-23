@@ -13,7 +13,8 @@
         window.DatDropAdapter,
         window.KeyDropAdapter,
         window.CSGOEmpireAdapter,
-        window.CSGO500Adapter
+        window.CSGO500Adapter,
+        window.ClashGGAdapter
     ].filter(Boolean);
 
     /**
