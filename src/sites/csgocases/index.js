@@ -121,7 +121,9 @@ class CSGOCasesAdapter {
         try {
             const rawData = await CSGOCasesAPI.fetchCaseData(caseSlug);
             if (rawData) {
-                return CSGOCasesParser.transform(rawData);
+                // Get case price from page (already in user currency)
+                const casePriceFromPage = CSGOCasesAPI.getCasePriceFromPage();
+                return CSGOCasesParser.transform(rawData, casePriceFromPage || null);
             }
             return null;
         } catch (error) {
@@ -131,12 +133,32 @@ class CSGOCasesAdapter {
     }
 
     /**
-     * Fetch user's currency preference
-     * CSGOCases prices are in USD
+     * Fetch user's currency preference from auth endpoint
      * @returns {Promise<Object>} - Currency object
      */
     async fetchUserCurrency() {
-        return CurrencyService.defaultCurrency;
+        try {
+            const user = await CSGOCasesAPI.fetchUserAuth();
+            const currencyCode = user?.psc_currency || 'USD';
+
+            // Calculate rate from case price comparison
+            const caseSlug = this.getCaseSlug();
+            if (caseSlug) {
+                const rawData = await CSGOCasesAPI.fetchCaseData(caseSlug);
+                const priceUsd = parseFloat(rawData?.case?.price_usd) || 0;
+                const priceLocal = CSGOCasesAPI.getCasePriceFromPage();
+
+                if (priceUsd > 0 && priceLocal > 0) {
+                    const rate = priceLocal / priceUsd;
+                    return CurrencyService.create(currencyCode, rate);
+                }
+            }
+
+            return CurrencyService.create(currencyCode, 1);
+        } catch (error) {
+            console.error('[CSGOCases Adapter] Error fetching currency:', error);
+            return CurrencyService.defaultCurrency;
+        }
     }
 }
 

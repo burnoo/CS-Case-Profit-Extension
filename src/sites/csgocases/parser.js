@@ -16,9 +16,10 @@ const CSGOCasesParser = {
     /**
      * Transform API data to unified format
      * @param {Object} rawData - Raw API response
+     * @param {number} casePriceOverride - Case price in user currency (from page)
      * @returns {Object|null} - Unified CaseData object
      */
-    transform(rawData) {
+    transform(rawData, casePriceOverride = null) {
         if (!rawData || !rawData.case || !rawData.products || rawData.products.length === 0) {
             return null;
         }
@@ -29,10 +30,13 @@ const CSGOCasesParser = {
         // Check if this case has valid odds (not all zeros)
         const hasValidOdds = items.some(item => item.odds > 0);
 
+        // Use page price (user currency) if provided, fallback to USD price
+        const casePrice = casePriceOverride !== null ? casePriceOverride : (parseFloat(rawData.case.price_usd) || 0);
+
         return {
             caseId: rawData.case.slug || 'unknown',
             caseName: rawData.case.name || 'Unknown Case',
-            casePrice: parseFloat(rawData.case.price_usd) || 0,
+            casePrice: casePrice,
             items: items,
             hasValidOdds: hasValidOdds
         };
