@@ -30,6 +30,9 @@
         "https://*.csgo.net/*",
         "https://csgo-skins.com/*",
         "https://*.csgo-skins.com/*",
+        "https://daddyskins.com/*",
+        "https://*.daddyskins.com/*",
+        "https://api.daddyskins.com/*",
         "https://prices.csgotrader.app/*"
     ],
     "background": {
@@ -233,12 +236,34 @@
                 "src/shared/ui/styles.css"
             ],
             "run_at": "document_idle"
+        },
+        {
+            "matches": [
+                "https://daddyskins.com/*",
+                "https://*.daddyskins.com/*"
+            ],
+            "js": [
+                "src/shared/utils/helpers.js",
+                "src/shared/services/cache.js",
+                "src/shared/services/currency.js",
+                "src/shared/services/pricing.js",
+                "src/shared/ui/templates.js",
+                "src/shared/ui/ProbabilityBox.js",
+                "src/sites/daddyskins/parser.js",
+                "src/sites/daddyskins/api.js",
+                "src/sites/daddyskins/index.js",
+                "src/content.js"
+            ],
+            "css": [
+                "src/shared/ui/styles.css"
+            ],
+            "run_at": "document_idle"
         }
     ],
     "web_accessible_resources": [
         {
             "resources": ["icons/*"],
-            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*", "https://datdrop.com/*", "https://*.datdrop.com/*", "https://keydrop.com/*", "https://*.keydrop.com/*", "https://csgoempire.com/*", "https://*.csgoempire.com/*", "https://csgo500.com/*", "https://*.csgo500.com/*", "https://clash.gg/*", "https://*.clash.gg/*", "https://csgo.net/*", "https://*.csgo.net/*", "https://csgo-skins.com/*", "https://*.csgo-skins.com/*"]
+            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*", "https://datdrop.com/*", "https://*.datdrop.com/*", "https://keydrop.com/*", "https://*.keydrop.com/*", "https://csgoempire.com/*", "https://*.csgoempire.com/*", "https://csgo500.com/*", "https://*.csgo500.com/*", "https://clash.gg/*", "https://*.clash.gg/*", "https://csgo.net/*", "https://*.csgo.net/*", "https://csgo-skins.com/*", "https://*.csgo-skins.com/*", "https://daddyskins.com/*", "https://*.daddyskins.com/*"]
         }
     ]
 }
