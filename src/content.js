@@ -15,7 +15,6 @@
         window.CSGOEmpireAdapter,
         window.CSGO500Adapter,
         window.ClashGGAdapter,
-        window.CSGONetAdapter,
         window.CSGOSkinsAdapter,
         window.DaddySkinsAdapter,
         window.CSGOCasesAdapter
