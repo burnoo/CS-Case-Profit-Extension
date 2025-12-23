@@ -127,12 +127,20 @@ class CSGOSkinsAdapter {
     }
 
     /**
-     * Fetch user's currency preference
-     * csgo-skins.com prices are in USD
+     * Fetch user's currency preference from cookie
      * @returns {Promise<Object>} - Currency object
      */
     async fetchUserCurrency() {
-        return CurrencyService.defaultCurrency;
+        // Get currency code from cookie
+        const currencyMatch = document.cookie.match(/currency=(\w+)/);
+        const currencyCode = currencyMatch ? currencyMatch[1] : 'USD';
+
+        // Get exchange rate from page
+        const html = document.documentElement.innerHTML;
+        const rateMatch = html.match(/rate:([\d.]+)/);
+        const rate = rateMatch ? parseFloat(rateMatch[1]) : 1;
+
+        return CurrencyService.create(currencyCode, rate);
     }
 }
 

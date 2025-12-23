@@ -12,26 +12,61 @@
 
 const CSGOSkinsAPI = {
     /**
+     * Get currency info from cookie and page
+     * @returns {{code: string, rate: number}}
+     */
+    getCurrencyInfo() {
+        // Get currency code from cookie
+        const currencyMatch = document.cookie.match(/currency=(\w+)/);
+        const currencyCode = currencyMatch ? currencyMatch[1] : 'USD';
+
+        // Try to find exchange rate in page
+        const html = document.documentElement.innerHTML;
+        const rateMatch = html.match(/rate:([\d.]+)/);
+        const rate = rateMatch ? parseFloat(rateMatch[1]) : 1;
+
+        return { code: currencyCode, rate: rate };
+    },
+
+    /**
+     * Extract numeric price from text (handles multiple currency formats)
+     * @param {string} text - Price text like "$10.50" or "42.00zł"
+     * @returns {number} - Numeric price value
+     */
+    extractPrice(text) {
+        if (!text) return 0;
+        // Remove currency symbols and extract number
+        const match = text.match(/([\d,.]+)/);
+        if (match) {
+            return parseFloat(match[1].replace(',', ''));
+        }
+        return 0;
+    },
+
+    /**
      * Scrape case data from the DOM
      * @returns {Object|null} - Case data or null on error
      */
     scrapePageData() {
         try {
+            // Get currency info for conversion
+            const currency = this.getCurrencyInfo();
+
             // Extract case name from h1
             const caseName = document.querySelector('h1')?.innerText?.trim() || 'Unknown Case';
 
             // Extract case price from open button
             const openButton = Array.from(document.querySelectorAll('button'))
                 .find(b => b.innerText.includes('Open for'));
-            const priceMatch = openButton?.innerText.match(/\$([\d.]+)/);
-            const casePrice = priceMatch ? parseFloat(priceMatch[1]) : 0;
+            const priceText = openButton?.innerText.match(/Open for\s*([\d,.]+\s*\S+)/)?.[1] || '';
+            const casePrice = this.extractPrice(priceText) / currency.rate;
 
             // Extract items from ContainerGroupedItem elements
             const itemContainers = document.querySelectorAll('.ContainerGroupedItem');
             const items = [];
 
             itemContainers.forEach((container, idx) => {
-                const itemData = this.extractItemData(container, idx);
+                const itemData = this.extractItemData(container, idx, currency.rate);
                 if (itemData) {
                     // extractItemData returns an array of variations
                     items.push(...itemData);
@@ -58,9 +93,10 @@ const CSGOSkinsAPI = {
      * Extract data from a single item container
      * @param {Element} container - Item DOM element
      * @param {number} idx - Item index
+     * @param {number} rate - Currency exchange rate to USD
      * @returns {Array|null} - Array of item variations or null
      */
-    extractItemData(container, idx) {
+    extractItemData(container, idx, rate = 1) {
         try {
             // Get item name from h3
             const name = container.querySelector('h3')?.innerText?.trim();
@@ -87,8 +123,7 @@ const CSGOSkinsAPI = {
                         // Use textContent instead of innerText (table may be hidden)
                         const wear = cells[0]?.textContent?.trim() || '';
                         const priceText = cells[1]?.textContent?.trim() || '';
-                        const priceMatch = priceText.match(/\$([\d,.]+)/);
-                        const price = priceMatch ? parseFloat(priceMatch[1].replace(',', '')) : 0;
+                        const price = this.extractPrice(priceText) / rate; // Convert to USD
                         const oddsText = cells[3]?.textContent?.trim() || '';
                         const oddsMatch = oddsText.match(/([\d.]+)%/);
                         const odds = oddsMatch ? parseFloat(oddsMatch[1]) : 0;
