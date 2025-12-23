@@ -20,6 +20,8 @@
         "https://key-drop.com/*",
         "https://*.key-drop.com/*",
         "https://cdn.key-drop.com/*",
+        "https://keydrop.com/*",
+        "https://*.keydrop.com/*",
         "https://csgoempire.com/*",
         "https://*.csgoempire.com/*",
         "https://csgo500.com/*",
@@ -108,7 +110,9 @@
         {
             "matches": [
                 "https://key-drop.com/*",
-                "https://*.key-drop.com/*"
+                "https://*.key-drop.com/*",
+                "https://keydrop.com/*",
+                "https://*.keydrop.com/*"
             ],
             "js": [
                 "src/shared/utils/helpers.js",
@@ -263,7 +267,7 @@
     "web_accessible_resources": [
         {
             "resources": ["icons/*"],
-            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*", "https://datdrop.com/*", "https://*.datdrop.com/*", "https://key-drop.com/*", "https://*.key-drop.com/*", "https://csgoempire.com/*", "https://*.csgoempire.com/*", "https://csgo500.com/*", "https://*.csgo500.com/*", "https://clash.gg/*", "https://*.clash.gg/*", "https://csgo-skins.com/*", "https://*.csgo-skins.com/*", "https://daddyskins.com/*", "https://*.daddyskins.com/*", "https://csgocases.com/*", "https://*.csgocases.com/*"]
+            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*", "https://datdrop.com/*", "https://*.datdrop.com/*", "https://key-drop.com/*", "https://*.key-drop.com/*", "https://keydrop.com/*", "https://*.keydrop.com/*", "https://csgoempire.com/*", "https://*.csgoempire.com/*", "https://csgo500.com/*", "https://*.csgo500.com/*", "https://clash.gg/*", "https://*.clash.gg/*", "https://csgo-skins.com/*", "https://*.csgo-skins.com/*", "https://daddyskins.com/*", "https://*.daddyskins.com/*", "https://csgocases.com/*", "https://*.csgocases.com/*"]
         }
     ]
 }

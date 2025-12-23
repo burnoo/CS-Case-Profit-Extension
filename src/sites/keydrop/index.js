@@ -13,7 +13,7 @@ class KeyDropAdapter {
      * @returns {boolean}
      */
     static matches(url) {
-        return url.includes('key-drop.com');
+        return url.includes('key-drop.com') || url.includes('keydrop.com');
     }
 
     /**
