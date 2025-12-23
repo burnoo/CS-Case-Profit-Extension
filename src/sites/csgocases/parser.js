@@ -24,14 +24,21 @@ const CSGOCasesParser = {
             return null;
         }
 
-        // Include both skin and boost items
-        const items = rawData.products.map((item, idx) => this.parseItem(item, idx));
+        // Use page price (user currency) if provided, fallback to USD price
+        const casePrice = casePriceOverride !== null ? casePriceOverride : (parseFloat(rawData.case.price_usd) || 0);
+
+        // Calculate currency conversion rate (local price / USD price)
+        // API returns prices in internal base units that need conversion
+        const priceUsd = parseFloat(rawData.case.price_usd) || 0;
+        const currencyRate = (casePriceOverride !== null && priceUsd > 0)
+            ? casePriceOverride / priceUsd
+            : 1;
+
+        // Include both skin and boost items, applying currency conversion
+        const items = rawData.products.map((item, idx) => this.parseItem(item, idx, currencyRate));
 
         // Check if this case has valid odds (not all zeros)
         const hasValidOdds = items.some(item => item.odds > 0);
-
-        // Use page price (user currency) if provided, fallback to USD price
-        const casePrice = casePriceOverride !== null ? casePriceOverride : (parseFloat(rawData.case.price_usd) || 0);
 
         return {
             caseId: rawData.case.slug || 'unknown',
@@ -46,11 +53,16 @@ const CSGOCasesParser = {
      * Parse a single item
      * @param {Object} item - Raw item from API
      * @param {number} idx - Item index
+     * @param {number} currencyRate - Currency conversion rate (local/USD)
      * @returns {Object} - Parsed item
      */
-    parseItem(item, idx) {
+    parseItem(item, idx, currencyRate = 1) {
         const isBoost = item.type === 'boost';
         const itemName = item.name || '';
+
+        // Convert price from internal units to user currency
+        const rawPrice = parseFloat(item.user_case_resell_price) || 0;
+        const convertedPrice = rawPrice * currencyRate;
 
         // Handle boost items (like "Free $") differently
         if (isBoost) {
@@ -68,7 +80,7 @@ const CSGOCasesParser = {
                 wearFull: '',
                 isStattrak: false,
                 isSouvenir: false,
-                price: parseFloat(item.user_case_resell_price) || 0,
+                price: convertedPrice,
                 odds: parseFloat(item.chance) || 0,
                 image: image,
                 marketHashName: itemName,
@@ -112,7 +124,7 @@ const CSGOCasesParser = {
             wearFull: wearFull,
             isStattrak: isStattrak,
             isSouvenir: parsed.isSouvenir,
-            price: parseFloat(item.user_case_resell_price) || 0,
+            price: convertedPrice,
             odds: parseFloat(item.chance) || 0,
             image: image,
             marketHashName: marketHashName,

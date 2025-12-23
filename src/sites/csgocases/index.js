@@ -32,8 +32,8 @@ class CSGOCasesAdapter {
      */
     isCasePage() {
         const path = window.location.pathname;
-        // Match /case/{slug} pattern
-        return /^\/case\/[^/]+/.test(path);
+        // Match /case/{slug} or /{lang}/case/{slug} pattern (e.g., /pl/case/knife)
+        return /^(?:\/[a-z]{2})?\/case\/[^/]+/.test(path);
     }
 
     /**
@@ -41,7 +41,8 @@ class CSGOCasesAdapter {
      * @returns {string|null}
      */
     getCaseSlug() {
-        const match = window.location.pathname.match(/^\/case\/([^/]+)/);
+        // Match /case/{slug} or /{lang}/case/{slug} pattern
+        const match = window.location.pathname.match(/^(?:\/[a-z]{2})?\/case\/([^/]+)/);
         return match ? match[1] : null;
     }
 
@@ -133,15 +134,15 @@ class CSGOCasesAdapter {
     }
 
     /**
-     * Fetch user's currency preference from auth endpoint
+     * Fetch user's currency preference from page display
      * @returns {Promise<Object>} - Currency object
      */
     async fetchUserCurrency() {
         try {
-            const user = await CSGOCasesAPI.fetchUserAuth();
-            const currencyCode = user?.psc_currency || 'USD';
+            // Get currency from page display (the currency selector button)
+            const currencyCode = CSGOCasesAPI.getCurrencyFromPage() || 'USD';
 
-            // Calculate rate from case price comparison
+            // Calculate rate from case price comparison (USD from API vs displayed price)
             const caseSlug = this.getCaseSlug();
             if (caseSlug) {
                 const rawData = await CSGOCasesAPI.fetchCaseData(caseSlug);
