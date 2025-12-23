@@ -13,7 +13,7 @@ class KeyDropAdapter {
      * @returns {boolean}
      */
     static matches(url) {
-        return url.includes('keydrop.com');
+        return url.includes('key-drop.com');
     }
 
     /**
@@ -148,13 +148,17 @@ class KeyDropAdapter {
     }
 
     /**
-     * Fetch user's currency preference
-     * KeyDrop uses USD by default
+     * Fetch user's currency preference from cookie
      * @returns {Promise<Object>} - Currency object {name, rate, symbol}
      */
     async fetchUserCurrency() {
-        // KeyDrop prices appear to be in USD
-        return CurrencyService.defaultCurrency;
+        // Get currency from cookie
+        const currencyMatch = document.cookie.match(/currency=(\w+)/);
+        const currencyCode = currencyMatch ? currencyMatch[1] : 'USD';
+
+        // KeyDrop API returns prices in the requested currency via x-currency header
+        // Since we request in the user's currency, rate is 1
+        return CurrencyService.create(currencyCode, 1);
     }
 }
 

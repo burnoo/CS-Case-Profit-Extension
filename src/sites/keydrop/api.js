@@ -38,6 +38,15 @@ const KeyDropAPI = {
     },
 
     /**
+     * Get user's currency from cookie
+     * @returns {string} - Currency code
+     */
+    getCurrency() {
+        const match = document.cookie.match(/currency=(\w+)/);
+        return match ? match[1] : 'USD';
+    },
+
+    /**
      * Fetch case data from API
      * @param {string} caseSlug - Case slug (e.g., "crocodilo")
      * @returns {Promise<Object|null>} - Case data or null on error
@@ -50,12 +59,13 @@ const KeyDropAPI = {
             }
 
             const lang = this.getLang();
+            const currency = this.getCurrency();
             const response = await fetch(`/${lang}/apiData/skins/Cases/getCaseData/${caseSlug}`, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json',
                     'Authorization': `Bearer ${token}`,
-                    'x-currency': 'USD'
+                    'x-currency': currency
                 }
             });
 
