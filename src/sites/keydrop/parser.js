@@ -74,13 +74,19 @@ const KeyDropParser = {
 
         let hashName = fullTitle.trim();
 
-        if (wearFull) {
-            hashName = `${hashName} (${wearFull})`;
+        // Strip phase from title if present (KeyDrop includes it as " - Phase 1" or similar)
+        if (phase) {
+            hashName = hashName
+                .replace(/\s*-\s*Phase\s*\d/i, '')
+                .replace(/\s*-\s*Ruby/i, '')
+                .replace(/\s*-\s*Sapphire/i, '')
+                .replace(/\s*-\s*Emerald/i, '')
+                .replace(/\s*-\s*Black Pearl/i, '')
+                .trim();
         }
 
-        // Add phase suffix for Dopplers (e.g., "★ Gut Knife | Doppler (Factory New) Phase 2")
-        if (phase) {
-            hashName = `${hashName} ${phase}`;
+        if (wearFull) {
+            hashName = `${hashName} (${wearFull})`;
         }
 
         return hashName;
