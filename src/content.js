@@ -15,7 +15,8 @@
         window.CSGOEmpireAdapter,
         window.CSGO500Adapter,
         window.ClashGGAdapter,
-        window.CSGONetAdapter
+        window.CSGONetAdapter,
+        window.CSGOSkinsAdapter
     ].filter(Boolean);
 
     /**
