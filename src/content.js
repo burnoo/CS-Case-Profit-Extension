@@ -14,7 +14,8 @@
         window.KeyDropAdapter,
         window.CSGOEmpireAdapter,
         window.CSGO500Adapter,
-        window.ClashGGAdapter
+        window.ClashGGAdapter,
+        window.CSGONetAdapter
     ].filter(Boolean);
 
     /**
