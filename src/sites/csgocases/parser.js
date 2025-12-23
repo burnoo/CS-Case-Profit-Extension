@@ -1,0 +1,224 @@
+/**
+ * CSGOCases Data Parser
+ * Transforms API data to unified CaseData format
+ *
+ * API response structure:
+ * - name: Full item name (e.g., "★ Bowie Knife | Slaughter")
+ * - price_buy_usd: Price in USD (string)
+ * - quality: Wear condition (e.g., "Minimal Wear")
+ * - chance: Odds as percentage string (e.g., "1.0000", "0.0000")
+ * - stattrak: "0" or "1" (string)
+ * - steam_image_file: URL-encoded Steam image URL
+ * - color: Hex color for rarity
+ */
+
+const CSGOCasesParser = {
+    /**
+     * Transform API data to unified format
+     * @param {Object} rawData - Raw API response
+     * @returns {Object|null} - Unified CaseData object
+     */
+    transform(rawData) {
+        if (!rawData || !rawData.case || !rawData.products || rawData.products.length === 0) {
+            return null;
+        }
+
+        // Include both skin and boost items
+        const items = rawData.products.map((item, idx) => this.parseItem(item, idx));
+
+        // Check if this case has valid odds (not all zeros)
+        const hasValidOdds = items.some(item => item.odds > 0);
+
+        return {
+            caseId: rawData.case.slug || 'unknown',
+            caseName: rawData.case.name || 'Unknown Case',
+            casePrice: parseFloat(rawData.case.price_usd) || 0,
+            items: items,
+            hasValidOdds: hasValidOdds
+        };
+    },
+
+    /**
+     * Parse a single item
+     * @param {Object} item - Raw item from API
+     * @param {number} idx - Item index
+     * @returns {Object} - Parsed item
+     */
+    parseItem(item, idx) {
+        const isBoost = item.type === 'boost';
+        const itemName = item.name || '';
+
+        // Handle boost items (like "Free $") differently
+        if (isBoost) {
+            // Get image from image_file for boost items (they don't have steam_image_file)
+            let image = '';
+            if (item.image_file) {
+                image = `https://csgocases.com/photos/${item.image_file}`;
+            }
+
+            return {
+                id: `csgocases-${idx}`,
+                weaponName: itemName,
+                skinName: '',
+                wear: '',
+                wearFull: '',
+                isStattrak: false,
+                isSouvenir: false,
+                price: parseFloat(item.user_case_resell_price) || 0,
+                odds: parseFloat(item.chance) || 0,
+                image: image,
+                marketHashName: itemName,
+                phase: null,
+                rarity: item.color || '',
+                isBoost: true
+            };
+        }
+
+        const parsed = this.parseItemName(itemName);
+        const wearFull = item.quality || '';
+        const wearShort = this.getWearShort(wearFull);
+        const isStattrak = item.stattrak === '1' || parsed.isStattrak;
+
+        // Build market hash name
+        let marketHashName = '';
+        if (isStattrak) {
+            marketHashName = `StatTrak\u2122 ${parsed.weaponName} | ${parsed.skinName}`;
+        } else {
+            marketHashName = `${parsed.weaponName} | ${parsed.skinName}`;
+        }
+        if (wearFull) {
+            marketHashName += ` (${wearFull})`;
+        }
+
+        // Decode steam image URL
+        let image = '';
+        if (item.steam_image_file) {
+            try {
+                image = decodeURIComponent(item.steam_image_file);
+            } catch (e) {
+                image = item.steam_image_file;
+            }
+        }
+
+        return {
+            id: `csgocases-${idx}`,
+            weaponName: parsed.weaponName,
+            skinName: parsed.skinName,
+            wear: wearShort,
+            wearFull: wearFull,
+            isStattrak: isStattrak,
+            isSouvenir: parsed.isSouvenir,
+            price: parseFloat(item.user_case_resell_price) || 0,
+            odds: parseFloat(item.chance) || 0,
+            image: image,
+            marketHashName: marketHashName,
+            phase: parsed.phase,
+            rarity: item.color || '',
+            isBoost: false
+        };
+    },
+
+    /**
+     * Parse item name to extract weapon, skin, etc.
+     * @param {string} fullName - Full item name
+     * @returns {Object} - Parsed components
+     */
+    parseItemName(fullName) {
+        let name = fullName;
+        let isStattrak = false;
+        let isSouvenir = false;
+        let phase = null;
+
+        // Check for StatTrak
+        if (name.includes('StatTrak')) {
+            isStattrak = true;
+            name = name.replace('StatTrak\u2122 ', '').replace('StatTrak ', '');
+        }
+
+        // Check for Souvenir
+        if (name.includes('Souvenir')) {
+            isSouvenir = true;
+            name = name.replace('Souvenir ', '');
+        }
+
+        // Extract Doppler phase
+        phase = this.extractPhase(name);
+
+        // Split weapon and skin name
+        let weaponName = '';
+        let skinName = '';
+
+        // Handle knives/gloves (star prefix)
+        if (name.startsWith('\u2605 ')) {
+            const parts = name.substring(2).split(' | ');
+            weaponName = '\u2605 ' + (parts[0] || '');
+            skinName = parts[1] || '';
+        }
+        // Handle stickers
+        else if (name.startsWith('Sticker |')) {
+            weaponName = 'Sticker';
+            skinName = name.replace('Sticker | ', '');
+        }
+        // Regular weapons
+        else {
+            const parts = name.split(' | ');
+            weaponName = parts[0] || '';
+            skinName = parts[1] || '';
+        }
+
+        return {
+            weaponName: weaponName.trim(),
+            skinName: skinName.trim(),
+            isStattrak,
+            isSouvenir,
+            phase
+        };
+    },
+
+    /**
+     * Get short wear code
+     * @param {string} wearFull - Full wear name
+     * @returns {string} - Short wear code
+     */
+    getWearShort(wearFull) {
+        const wearMap = {
+            'Factory New': 'FN',
+            'Minimal Wear': 'MW',
+            'Field-Tested': 'FT',
+            'Well-Worn': 'WW',
+            'Battle-Scarred': 'BS'
+        };
+        return wearMap[wearFull] || '';
+    },
+
+    /**
+     * Extract Doppler phase from name
+     * @param {string} name - Item name
+     * @returns {string|null} - Phase or null
+     */
+    extractPhase(name) {
+        if (!name.toLowerCase().includes('doppler')) return null;
+
+        const phasePatterns = [
+            { pattern: /Phase 1/i, name: 'Phase 1' },
+            { pattern: /Phase 2/i, name: 'Phase 2' },
+            { pattern: /Phase 3/i, name: 'Phase 3' },
+            { pattern: /Phase 4/i, name: 'Phase 4' },
+            { pattern: /Ruby/i, name: 'Ruby' },
+            { pattern: /Sapphire/i, name: 'Sapphire' },
+            { pattern: /Emerald/i, name: 'Emerald' },
+            { pattern: /Black Pearl/i, name: 'Black Pearl' }
+        ];
+
+        for (const { pattern, name: phaseName } of phasePatterns) {
+            if (pattern.test(name)) {
+                return phaseName;
+            }
+        }
+
+        return null;
+    }
+};
+
+// Make available globally for content scripts
+window.CSGOCasesParser = CSGOCasesParser;

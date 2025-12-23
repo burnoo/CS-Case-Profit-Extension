@@ -151,6 +151,10 @@ class ProbabilityBox {
      */
     processItems() {
         this.items = this.caseData.items.map(item => {
+            // Skip real price lookup for boost items (like "Free $")
+            if (item.isBoost) {
+                return { ...item, realPrice: null };
+            }
             const realPrice = PricingService.getRealPrice(
                 item.weaponName,
                 item.skinName,
@@ -173,15 +177,25 @@ class ProbabilityBox {
         }
 
         const casePrice = this.caseData.casePrice || 0;
+        const hasValidOdds = this.caseData.hasValidOdds !== false;
 
         // Calculate stats
         const stats = this.calculateStats(casePrice);
 
         // Update stat cards
-        this.renderStats(stats, casePrice);
+        this.renderStats(stats, casePrice, hasValidOdds);
 
         // Render items table
-        this.renderTable(casePrice);
+        this.renderTable(casePrice, hasValidOdds);
+
+        // Disable test button if no valid odds
+        const testBtn = document.getElementById('csp-test-btn');
+        if (testBtn && !hasValidOdds) {
+            testBtn.disabled = true;
+            testBtn.style.opacity = '0.5';
+            testBtn.style.cursor = 'not-allowed';
+            testBtn.title = 'Odds not available for this case';
+        }
     }
 
     /**
@@ -242,28 +256,41 @@ class ProbabilityBox {
      * Render stat cards
      * @param {Object} stats - Statistics object
      * @param {number} casePrice - Case price
+     * @param {boolean} hasValidOdds - Whether case has valid odds
      */
-    renderStats(stats, casePrice) {
+    renderStats(stats, casePrice, hasValidOdds = true) {
         const { profitability, expectedValue, profitChance, maxProfit, maxLoss, hasRealPrices, real } = stats;
 
         // Profitability
         const profitEl = document.getElementById('csp-profitability');
         let profitColorClass = '';
-        if (profitability < 86) profitColorClass = 'negative';
-        else if (profitability <= 90) profitColorClass = 'white';
+        if (hasValidOdds && profitability < 86) profitColorClass = 'negative';
+        else if (hasValidOdds && profitability <= 90) profitColorClass = 'white';
         profitEl.className = 'csp-stat-value ' + profitColorClass;
-        profitEl.innerHTML = casePrice > 0 ? `${profitability.toFixed(1)}%` : 'N/A';
-        this.addRealSub(profitEl, hasRealPrices && casePrice > 0, `${real.profitability?.toFixed(1)}%`);
+        if (!hasValidOdds) {
+            profitEl.innerHTML = 'N/A';
+        } else {
+            profitEl.innerHTML = casePrice > 0 ? `${profitability.toFixed(1)}%` : 'N/A';
+            this.addRealSub(profitEl, hasRealPrices && casePrice > 0, `${real.profitability?.toFixed(1)}%`);
+        }
 
         // Expected Value
         const evEl = document.getElementById('csp-expected-value');
-        evEl.textContent = CurrencyService.formatPrice(expectedValue, this.userCurrency);
-        this.addRealSub(evEl, hasRealPrices, CurrencyService.formatPrice(real.expectedValue, this.userCurrency));
+        if (!hasValidOdds) {
+            evEl.textContent = 'N/A';
+        } else {
+            evEl.textContent = CurrencyService.formatPrice(expectedValue, this.userCurrency);
+            this.addRealSub(evEl, hasRealPrices, CurrencyService.formatPrice(real.expectedValue, this.userCurrency));
+        }
 
         // Profit Chance
         const pcEl = document.getElementById('csp-profit-chance');
-        pcEl.textContent = `${profitChance.toFixed(2)}%`;
-        this.addRealSub(pcEl, hasRealPrices, `${real.profitChance?.toFixed(2)}%`);
+        if (!hasValidOdds) {
+            pcEl.textContent = 'N/A';
+        } else {
+            pcEl.textContent = `${profitChance.toFixed(2)}%`;
+            this.addRealSub(pcEl, hasRealPrices, `${real.profitChance?.toFixed(2)}%`);
+        }
 
         // Max Profit
         const mpEl = document.getElementById('csp-max-profit');
@@ -294,8 +321,9 @@ class ProbabilityBox {
     /**
      * Render items table
      * @param {number} casePrice - Case price
+     * @param {boolean} hasValidOdds - Whether case has valid odds
      */
-    renderTable(casePrice) {
+    renderTable(casePrice, hasValidOdds = true) {
         // Sort by price descending
         const sortedItems = [...this.items].sort((a, b) => b.price - a.price);
 
@@ -318,6 +346,9 @@ class ProbabilityBox {
                 realProfitDisplay = CurrencyService.formatProfit(realProfit, this.userCurrency);
             }
 
+            // Show "?" for odds if not available
+            const oddsDisplay = hasValidOdds ? `${item.odds.toFixed(3)}%` : '?';
+
             tableHTML += Templates.tableRow({
                 index: idx + 1,
                 itemName: Templates.itemName(item),
@@ -325,7 +356,7 @@ class ProbabilityBox {
                 realPrice: realPriceDisplay,
                 profit: casePrice > 0 ? CurrencyService.formatProfit(profit, this.userCurrency) : '-',
                 realProfit: realProfitDisplay,
-                odds: `${item.odds.toFixed(3)}%`,
+                odds: oddsDisplay,
                 profitClass,
                 realProfitClass,
                 rowClass
