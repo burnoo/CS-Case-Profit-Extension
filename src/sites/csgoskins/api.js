@@ -141,17 +141,24 @@ const CSGOSkinsAPI = {
                     const cells = row.querySelectorAll('td');
                     if (cells.length >= 4) {
                         // Use textContent instead of innerText (table may be hidden)
-                        const wear = cells[0]?.textContent?.trim() || '';
+                        const wearRaw = cells[0]?.textContent?.trim() || '';
                         const priceText = cells[1]?.textContent?.trim() || '';
                         const price = this.extractPrice(priceText) / rate; // Convert to USD
                         const oddsText = cells[3]?.textContent?.trim() || '';
                         const oddsMatch = oddsText.match(/([\d.]+)%/);
                         const odds = oddsMatch ? parseFloat(oddsMatch[1]) : 0;
 
+                        // Check for StatTrak - wear cell contains "ST FN", "ST MW", etc.
+                        // Also can check for cell--is-statTrak class on the cell
+                        const isStattrak = wearRaw.startsWith('ST ') ||
+                            cells[0]?.classList?.contains('cell--is-statTrak');
+                        const wear = isStattrak ? wearRaw.replace('ST ', '') : wearRaw;
+
                         variations.push({
                             id: `csgoskins-${idx}-${rowIdx}`,
                             name: name,
                             wear: wear,
+                            isStattrak: isStattrak,
                             price: price,
                             odds: odds,
                             colorRGB: colorRGB,

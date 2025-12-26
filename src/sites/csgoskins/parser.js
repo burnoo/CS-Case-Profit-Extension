@@ -39,10 +39,19 @@ const CSGOSkinsParser = {
         const wear = item.wear || parsed.wearShort;
         const wearFull = this.getWearFull(wear) || parsed.wearFull;
 
-        // Build market hash name with wear
-        let marketHashName = item.name;
-        if (wear && !item.name.includes('(')) {
-            marketHashName = `${item.name} (${wearFull})`;
+        // Use isStattrak from scraper (from chances_table) or from name parsing
+        const isStattrak = item.isStattrak || parsed.isStattrak;
+
+        // Build market hash name with StatTrak prefix and wear
+        let marketHashName = '';
+        if (isStattrak) {
+            // Add StatTrak™ prefix
+            marketHashName = `StatTrak\u2122 ${item.name}`;
+        } else {
+            marketHashName = item.name;
+        }
+        if (wearFull && !marketHashName.includes('(')) {
+            marketHashName = `${marketHashName} (${wearFull})`;
         }
 
         return {
@@ -51,7 +60,7 @@ const CSGOSkinsParser = {
             skinName: parsed.skinName,
             wear: wear,
             wearFull: wearFull,
-            isStattrak: parsed.isStattrak,
+            isStattrak: isStattrak,
             isSouvenir: parsed.isSouvenir,
             price: item.price || 0, // Use price from chances_table
             odds: item.odds,
