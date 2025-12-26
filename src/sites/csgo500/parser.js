@@ -11,6 +11,8 @@
  */
 
 const CSGO500Parser = {
+    CDN_BASE_URL: 'https://cdnv1.csgo500.com',
+
     /**
      * Transform API response to unified format
      * @param {Object} rawData - Raw API response { case, caseItems }
@@ -24,9 +26,12 @@ const CSGO500Parser = {
         const caseData = rawData.case;
         const caseItems = rawData.caseItems || [];
 
+        // Build image lookup map from case.items for fallback
+        const imageMap = this.buildImageMap(caseData.items || []);
+
         // Use caseItems for detailed item info, fallback to case.items
         const items = caseItems.length > 0
-            ? this.parseDetailedItems(caseItems)
+            ? this.parseDetailedItems(caseItems, imageMap)
             : this.parseBasicItems(caseData.items || []);
 
         return {
@@ -38,11 +43,28 @@ const CSGO500Parser = {
     },
 
     /**
+     * Build image lookup map from case.items array
+     * Used as fallback for quantifiable items that don't have image in caseItems
+     * @param {Array} items - case.items array
+     * @returns {Map} - Map of itemId to image URL
+     */
+    buildImageMap(items) {
+        const map = new Map();
+        for (const item of items) {
+            if (item.itemId && item.meta && item.meta.image) {
+                map.set(item.itemId, item.meta.image);
+            }
+        }
+        return map;
+    },
+
+    /**
      * Parse detailed items from caseItems array
      * @param {Array} caseItems - Detailed item array
+     * @param {Map} imageMap - Fallback image map from case.items
      * @returns {Array} - Parsed items
      */
-    parseDetailedItems(caseItems) {
+    parseDetailedItems(caseItems, imageMap = new Map()) {
         return caseItems.map((item, idx) => {
             const details = item.details || {};
 
@@ -75,6 +97,12 @@ const CSGO500Parser = {
                     phase
                 );
 
+            // Resolve image URL (handle cdn:// prefix for non-Steam items)
+            // Fallback to imageMap for quantifiable items that don't have image in caseItems
+            // Note: caseItems uses _id, which matches itemId in case.items
+            const rawImage = item.image || details.imageUrl || imageMap.get(item._id) || '';
+            const resolvedImage = this.resolveImageUrl(rawImage);
+
             return {
                 id: item._id || `csgo500-${idx}`,
                 weaponName: weaponName,
@@ -84,7 +112,7 @@ const CSGO500Parser = {
                 isStattrak: marketHashName.includes('StatTrak'),
                 price: (item.price || 0) / 100,
                 odds: item.odds || 0,
-                image: item.image || details.imageUrl || '',
+                image: resolvedImage,
                 marketHashName: marketHashName,
                 phase: phase
             };
@@ -109,6 +137,10 @@ const CSGO500Parser = {
             // Extract phase
             const phase = this.extractPhase(skinName);
 
+            // Resolve image URL (handle cdn:// prefix for non-Steam items)
+            const rawImage = meta.image || '';
+            const resolvedImage = this.resolveImageUrl(rawImage);
+
             return {
                 id: item.itemId || `csgo500-${idx}`,
                 weaponName: weaponName,
@@ -118,11 +150,28 @@ const CSGO500Parser = {
                 isStattrak: false,
                 price: (item.price || 0) / 100,
                 odds: item.odds || 0,
-                image: meta.image || '',
+                image: resolvedImage,
                 marketHashName: `${weaponName} | ${skinName}`,
                 phase: phase
             };
         });
+    },
+
+    /**
+     * Resolve image URL - converts cdn:// prefix to actual CDN URL
+     * @param {string} imageUrl - Raw image URL from API
+     * @returns {string} - Resolved image URL
+     */
+    resolveImageUrl(imageUrl) {
+        if (!imageUrl) return '';
+
+        // Handle cdn:// prefix (non-Steam custom items)
+        if (imageUrl.startsWith('cdn://')) {
+            return `${this.CDN_BASE_URL}/${imageUrl.substring(6)}`;
+        }
+
+        // Return as-is for Steam images and other URLs
+        return imageUrl;
     },
 
     /**
