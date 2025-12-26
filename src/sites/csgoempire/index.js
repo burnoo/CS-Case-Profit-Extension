@@ -3,10 +3,23 @@
  * Implements the site adapter interface for CSGOEmpire
  *
  * URL pattern: https://csgoempire.com/cases/open/{slug}
- * Data source: DOM scraping (API is protected)
+ * Data source: API
+ *
+ * Currency: CSGOEmpire uses "empire coins" internally
+ * - 100 empire coins = €52 (1 coin = €0.52 EUR)
+ * - Users can select display currency (EUR, USD, coins, etc.)
+ * - We convert to USD for internal calculations
  */
 
 class CSGOEmpireAdapter {
+    // Default empire coin to EUR conversion rate (100 coins = €52)
+    static DEFAULT_COIN_TO_EUR = 0.52;
+    // Default exchange rates to USD (fallback if API fails)
+    static DEFAULT_EUR_TO_USD = 1.04;
+    static DEFAULT_GBP_TO_USD = 1.27;
+
+    // Cached exchange rates from API
+    _exchangeRates = null;
     /**
      * Check if this adapter handles the given URL
      * @param {string} url - Current URL
@@ -123,6 +136,21 @@ class CSGOEmpireAdapter {
     }
 
     /**
+     * Get exchange rates (using defaults since metadata API is protected)
+     * @returns {Object} - Exchange rates object
+     */
+    getExchangeRates() {
+        if (!this._exchangeRates) {
+            this._exchangeRates = {
+                coinToEur: CSGOEmpireAdapter.DEFAULT_COIN_TO_EUR,
+                eurToUsd: CSGOEmpireAdapter.DEFAULT_EUR_TO_USD,
+                gbpToUsd: CSGOEmpireAdapter.DEFAULT_GBP_TO_USD
+            };
+        }
+        return this._exchangeRates;
+    }
+
+    /**
      * Fetch case data from API
      * @returns {Promise<Object|null>} - Unified CaseData object
      */
@@ -135,7 +163,13 @@ class CSGOEmpireAdapter {
         try {
             const rawData = await CSGOEmpireAPI.fetchCaseData(caseSlug);
             if (rawData) {
-                return CSGOEmpireParser.transform(rawData);
+                // Get exchange rates
+                const rates = this.getExchangeRates();
+
+                // Convert empire coin prices to USD
+                // 1 coin = €0.52, then convert EUR to USD
+                const coinToUsd = rates.coinToEur * rates.eurToUsd;
+                return CSGOEmpireParser.transform(rawData, coinToUsd);
             }
             return null;
         } catch (error) {
@@ -145,13 +179,51 @@ class CSGOEmpireAdapter {
     }
 
     /**
+     * Detect user's selected currency from the page
+     * @returns {string|null} - Currency code or null
+     */
+    detectUserCurrency() {
+        // CSGOEmpire stores currency directly in localStorage as "currency" key
+        try {
+            const currency = localStorage.getItem('currency');
+            if (currency) {
+                console.log('[CSGOEmpire] Found currency in localStorage:', currency);
+                return currency.toUpperCase();
+            }
+        } catch (e) {
+            console.error('[CSGOEmpire] Error reading currency from localStorage:', e);
+        }
+
+        console.log('[CSGOEmpire] Could not detect currency, defaulting to USD');
+        return null;
+    }
+
+    /**
      * Fetch user's currency preference
-     * CSGOEmpire uses its own coin system (1 coin = $1)
+     * CSGOEmpire uses empire coins internally, users can select display currency
      * @returns {Promise<Object>} - Currency object {name, rate, symbol}
      */
     async fetchUserCurrency() {
-        // CSGOEmpire uses coins which are equivalent to USD
-        return CurrencyService.defaultCurrency;
+        const detectedCurrency = this.detectUserCurrency();
+
+        // If empire coins or no currency detected, use USD
+        if (!detectedCurrency || detectedCurrency === 'COINS' || detectedCurrency === 'COIN') {
+            return CurrencyService.defaultCurrency; // USD
+        }
+
+        // Get exchange rates
+        const rates = this.getExchangeRates();
+
+        // The rate here is for DISPLAY purposes (USD to display currency)
+        // Prices are already converted to USD internally
+        switch (detectedCurrency) {
+            case 'EUR':
+                return CurrencyService.create('EUR', 1 / rates.eurToUsd);
+            case 'GBP':
+                return CurrencyService.create('GBP', 1 / rates.gbpToUsd);
+            default:
+                return CurrencyService.defaultCurrency;
+        }
     }
 }
 

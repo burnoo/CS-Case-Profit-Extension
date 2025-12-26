@@ -24,9 +24,10 @@ const CSGOEmpireParser = {
     /**
      * Transform API response to unified format
      * @param {Object} rawData - Raw API response data
+     * @param {number} coinToUsd - Conversion rate from empire coins to USD (default: 0.5408 = €0.52 * 1.04)
      * @returns {Object|null} - Unified CaseData object
      */
-    transform(rawData) {
+    transform(rawData, coinToUsd = 0.5408) {
         if (!rawData || !rawData.items) {
             return null;
         }
@@ -52,8 +53,10 @@ const CSGOEmpireParser = {
             // Extract phase from skin name for Doppler skins
             const phase = this.extractPhase(item.item_name);
 
-            // Convert price from cents to dollars
-            const price = item.price / 100;
+            // Convert price from empire coins to USD
+            // API returns price in coins (e.g., 15000 = 15000 coins)
+            // 100 coins = €52, so 1 coin = €0.52, then convert to USD
+            const price = (item.price / 100) * coinToUsd;
 
             // Odds are already in percentage format
             const odds = item.chance;
@@ -89,7 +92,7 @@ const CSGOEmpireParser = {
         return {
             caseId: rawData.slug || 'unknown',
             caseName: rawData.case_name || 'Unknown Case',
-            casePrice: (rawData.total_price || 0) / 100,
+            casePrice: ((rawData.total_price || 0) / 100) * coinToUsd,
             items: items
         };
     },
