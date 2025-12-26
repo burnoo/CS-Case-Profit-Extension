@@ -55,19 +55,32 @@ const PricingService = {
 
     /**
      * Build market hash name for a CS item
-     * @param {string} weaponName - Weapon name (e.g., "AK-47")
+     * @param {string} weaponName - Weapon name (e.g., "AK-47" or "★ Karambit")
      * @param {string} skinName - Skin name (e.g., "Bloodsport")
      * @param {string} exterior - Exterior/wear (e.g., "Factory New")
      * @param {boolean} isStattrak - Whether item is StatTrak
      * @returns {string} - Market hash name
      */
     getMarketHashName(weaponName, skinName, exterior, isStattrak) {
-        const prefix = isStattrak ? 'StatTrak™ ' : '';
+        // Handle ★ prefix for knives/gloves - must come before StatTrak™
+        // Correct format: "★ StatTrak™ Weapon | Skin (Wear)"
+        let starPrefix = '';
+        let cleanWeaponName = weaponName || '';
+
+        // Check for various star characters (U+2605 ★, U+2606 ☆, etc.)
+        const starMatch = cleanWeaponName.match(/^(\u2605|\u2606|\u22C6|\*)\s*/);
+        if (starMatch) {
+            starPrefix = '★ ';
+            cleanWeaponName = cleanWeaponName.substring(starMatch[0].length);
+        }
+
+        const stattrakPrefix = isStattrak ? 'StatTrak™ ' : '';
+
         // Don't include wear for items without it (stickers, etc.)
         if (!exterior || exterior === '') {
-            return `${prefix}${weaponName} | ${skinName}`;
+            return `${starPrefix}${stattrakPrefix}${cleanWeaponName} | ${skinName}`;
         }
-        return `${prefix}${weaponName} | ${skinName} (${exterior})`;
+        return `${starPrefix}${stattrakPrefix}${cleanWeaponName} | ${skinName} (${exterior})`;
     },
 
     /**

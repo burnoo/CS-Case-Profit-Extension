@@ -13,6 +13,21 @@
  */
 
 const CSGOCasesParser = {
+    // Known knife types that should have ★ prefix
+    KNIFE_TYPES: [
+        'Karambit', 'M9 Bayonet', 'Bayonet', 'Butterfly Knife', 'Flip Knife',
+        'Gut Knife', 'Huntsman Knife', 'Falchion Knife', 'Shadow Daggers',
+        'Bowie Knife', 'Navaja Knife', 'Stiletto Knife', 'Talon Knife',
+        'Ursus Knife', 'Classic Knife', 'Paracord Knife', 'Survival Knife',
+        'Nomad Knife', 'Skeleton Knife', 'Kukri Knife'
+    ],
+
+    // Known glove types that should have ★ prefix
+    GLOVE_TYPES: [
+        'Sport Gloves', 'Driver Gloves', 'Hand Wraps', 'Moto Gloves',
+        'Specialist Gloves', 'Hydra Gloves', 'Broken Fang Gloves'
+    ],
+
     /**
      * Transform API data to unified format
      * @param {Object} rawData - Raw API response
@@ -101,9 +116,16 @@ const CSGOCasesParser = {
         let starPrefix = '';
         let cleanWeaponName = parsed.weaponName;
 
-        if (parsed.weaponName.startsWith('★ ')) {
+        // Check for various star characters (U+2605 ★, or other star-like chars)
+        // Strip any existing star prefix first
+        const starMatch = cleanWeaponName.match(/^(\u2605|\u2606|\u22C6|\*)\s*/);
+        if (starMatch) {
+            cleanWeaponName = cleanWeaponName.substring(starMatch[0].length);
+        }
+
+        // Add proper ★ prefix for knives/gloves
+        if (starMatch || this.isKnifeOrGlove(cleanWeaponName)) {
             starPrefix = '★ ';
-            cleanWeaponName = parsed.weaponName.substring(2);
         }
 
         const stattrakPrefix = isStattrak ? 'StatTrak\u2122 ' : '';
@@ -243,6 +265,18 @@ const CSGOCasesParser = {
         }
 
         return null;
+    },
+
+    /**
+     * Check if weapon name is a knife or glove type
+     * @param {string} weaponName - Weapon name
+     * @returns {boolean} - True if knife or glove
+     */
+    isKnifeOrGlove(weaponName) {
+        if (!weaponName) return false;
+        const name = weaponName.toLowerCase();
+        return this.KNIFE_TYPES.some(k => name.includes(k.toLowerCase())) ||
+               this.GLOVE_TYPES.some(g => name.includes(g.toLowerCase()));
     }
 };
 
