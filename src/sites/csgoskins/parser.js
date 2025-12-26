@@ -45,8 +45,15 @@ const CSGOSkinsParser = {
         // Check if item needs ★ prefix (knives/gloves without it)
         const needsStarPrefix = this.isKnifeOrGloves(item.name) && !item.name.startsWith('★');
 
+        // Build base name without phase (phase will be added at the end)
+        let nameWithoutPhase = item.name;
+        if (parsed.phase) {
+            // Remove phase from name (it will be added after wear)
+            nameWithoutPhase = item.name.replace(new RegExp(`\\s*-?\\s*${parsed.phase}$`, 'i'), '').trim();
+        }
+
         // Build market hash name with proper prefixes
-        let baseName = needsStarPrefix ? `★ ${item.name}` : item.name;
+        let baseName = needsStarPrefix ? `★ ${nameWithoutPhase}` : nameWithoutPhase;
         let marketHashName = '';
         if (isStattrak) {
             // Add StatTrak™ prefix
@@ -56,6 +63,10 @@ const CSGOSkinsParser = {
         }
         if (wearFull && !marketHashName.includes('(')) {
             marketHashName = `${marketHashName} (${wearFull})`;
+        }
+        // Add phase at the end (after wear) for Doppler items
+        if (parsed.phase) {
+            marketHashName = `${marketHashName} ${parsed.phase}`;
         }
 
         // Update weaponName with star prefix if needed
