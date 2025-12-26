@@ -215,9 +215,11 @@
                 "src/shared/services/pricing.js",
                 "src/shared/ui/templates.js",
                 "src/shared/ui/ProbabilityBox.js",
+                "src/shared/ui/PromoBanner.js",
                 "src/sites/csgoskins/parser.js",
                 "src/sites/csgoskins/api.js",
                 "src/sites/csgoskins/index.js",
+                "src/sites/csgoskins/promo.js",
                 "src/content.js"
             ],
             "css": [
