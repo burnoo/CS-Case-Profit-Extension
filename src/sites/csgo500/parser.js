@@ -69,8 +69,9 @@ const CSGO500Parser = {
             const details = item.details || {};
 
             // Build weapon name with star prefix if needed
+            // For gloves, details.weapon may be undefined but item.type has the glove type
             const weaponName = details.quality === '★'
-                ? `★ ${details.weapon}`
+                ? `★ ${details.weapon || item.type || ''}`
                 : details.weapon || item.type || '';
 
             // Get skin name
