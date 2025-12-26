@@ -45,55 +45,44 @@ class CSGOEmpireAdapter {
 
     /**
      * Find DOM element to insert box after
-     * Insert below Open button and above "Case contains" section
+     * Insert below Open button area and above "Case contains" section
+     * Uses stable selectors (classes/structure) instead of text matching for language independence
      * @returns {Promise<Element|null>}
      */
     async getInsertionPoint() {
-        // Wait for the Open button to load
-        await this.waitForElement('button', 3000);
+        // Wait for the case items grid to load (indicates page is ready)
+        await this.waitForElement('.case-items-grid', 5000);
 
-        // Find the Open button
-        const openBtn = Array.from(document.querySelectorAll('button')).find(b =>
-            b.textContent?.trim() === 'Open'
-        );
+        // Find the main content container (has w-full and p-lg classes)
+        const mainContainer = document.querySelector('.w-full.p-lg');
+        if (!mainContainer) return null;
 
-        if (openBtn) {
-            // Go up to find the direct child of the main content container
-            // The main container has classes: "w-full p-lg xl:p-xl"
-            let el = openBtn;
-            while (el && el !== document.body) {
-                const parent = el.parentElement;
-                // Check if parent is THE main content container (has w-full, p-lg, and xl:p-xl)
-                if (parent?.className?.includes('w-full') &&
-                    parent?.className?.includes('p-lg') &&
-                    parent?.className?.includes('xl:p-xl')) {
-                    // el is the direct child - insert after it
-                    return el;
-                }
-                el = parent;
+        // Strategy 1: Find the H3 element (case contains header) and insert before it
+        // H3 is language-independent - there's typically only one H3 in the case page
+        const h3 = mainContainer.querySelector('h3');
+        if (h3 && h3.previousElementSibling) {
+            return h3.previousElementSibling;
+        }
+
+        // Strategy 2: Find the case-items-grid and insert before it
+        const itemsGrid = mainContainer.querySelector('.case-items-grid');
+        if (itemsGrid) {
+            // The H3 is the previous sibling of the grid
+            const gridParent = itemsGrid.previousElementSibling;
+            if (gridParent && gridParent.previousElementSibling) {
+                return gridParent.previousElementSibling;
             }
         }
 
-        // Fallback: find "Case contains" h3 and insert before it
-        const caseContainsH3 = Array.from(document.querySelectorAll('h3')).find(h =>
-            h.textContent?.includes('Case contains')
-        );
-
-        if (caseContainsH3 && caseContainsH3.previousElementSibling) {
-            return caseContainsH3.previousElementSibling;
-        }
-
-        // Last fallback: find the case header section
-        const h2 = document.querySelector('h2');
-        if (h2) {
-            let container = h2.parentElement;
-            while (container && container !== document.body) {
-                if (container.tagName === 'SECTION' ||
-                    (container.tagName === 'DIV' && container.children.length > 2)) {
-                    return container;
-                }
-                container = container.parentElement;
+        // Strategy 3: Find direct children and look for the spinner/open area
+        // The open button area contains tabs (1,2,3,4) - look for element with role="tablist"
+        const tablist = mainContainer.querySelector('[role="tablist"]');
+        if (tablist) {
+            let el = tablist;
+            while (el && el.parentElement !== mainContainer) {
+                el = el.parentElement;
             }
+            if (el) return el;
         }
 
         return null;
