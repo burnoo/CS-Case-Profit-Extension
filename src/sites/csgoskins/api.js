@@ -71,9 +71,10 @@ const CSGOSkinsAPI = {
                 // English: "Open for $2.50"
                 priceText = openButton.innerText.match(/Open for\s*(.+)$/)?.[1]?.trim() || '';
             } else {
-                // Non-English: find button with price pattern (e.g., "$2.50", "2.50 zł", "2,50 €")
+                // Non-English: find button with price pattern (e.g., "$2.50", "2.50 zł", "₺112.50")
+                // Supports: $ € £ zł ₽ ¥ ₺ ₴ R$ (USD, EUR, GBP, PLN, RUB, JPY/CNY, TRY, UAH, BRL)
                 openButton = Array.from(document.querySelectorAll('main button, .section--control button'))
-                    .find(b => /[\d,.]+\s*[$€£zł₽¥]|[$€£₽¥]\s*[\d,.]+/.test(b.innerText));
+                    .find(b => /[\d,.]+\s*[$€£zł₽¥₺₴]|[$€£₽¥₺₴]\s*[\d,.]+|R\$\s*[\d,.]+/.test(b.innerText));
                 if (openButton) {
                     priceText = openButton.innerText.trim();
                 }
