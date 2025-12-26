@@ -9,7 +9,8 @@ const CurrencyService = {
         'RUB': '₽', 'CNY': '¥', 'JPY': '¥', 'KRW': '₩', 'TRY': '₺',
         'INR': '₹', 'RON': 'lei', 'CZK': 'Kč', 'SEK': 'kr', 'NOK': 'kr',
         'DKK': 'kr', 'CHF': 'Fr', 'AUD': 'A$', 'CAD': 'C$', 'MXN': '$',
-        'HUF': 'Ft', 'PHP': '₱', 'THB': '฿', 'IDR': 'Rp', 'MYR': 'RM'
+        'HUF': 'Ft', 'PHP': '₱', 'THB': '฿', 'IDR': 'Rp', 'MYR': 'RM',
+        'ARS': 'ARS', 'CLP': 'CLP', 'COP': 'COP', 'PEN': 'S/', 'UAH': '₴'
     },
 
     // Default currency

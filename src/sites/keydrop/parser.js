@@ -12,12 +12,17 @@ const KeyDropParser = {
     /**
      * Transform KeyDrop case data to unified format
      * @param {Object} rawData - Raw case data from window.__case
+     * @param {number} exchangeRate - Exchange rate to normalize prices to USD (e.g., 1371 for ARS)
      * @returns {Object} - Unified CaseData object
      */
-    transform(rawData) {
+    transform(rawData, exchangeRate = 1) {
         if (!rawData) {
             return null;
         }
+
+        // Normalize prices to USD by dividing by exchange rate
+        // This ensures consistency with other sites and proper currency formatting
+        const rate = exchangeRate > 0 ? exchangeRate : 1;
 
         const items = [];
         const rawItems = rawData.items || [];
@@ -37,6 +42,10 @@ const KeyDropParser = {
                 // Build market hash name (including phase if present)
                 const marketHashName = this.buildMarketHashName(item.fullTitle, wearFull, phase);
 
+                // Normalize price to USD
+                const priceInLocalCurrency = wearData.price || 0;
+                const priceInUsd = priceInLocalCurrency / rate;
+
                 items.push({
                     id: `${item.id}_${wearData.rarity}`,
                     weaponName: (item.title || '').trim(),
@@ -44,7 +53,7 @@ const KeyDropParser = {
                     wear: wear,
                     wearFull: wearFull,
                     isStattrak: (item.fullTitle || '').includes('StatTrak'),
-                    price: wearData.price || 0,
+                    price: priceInUsd,
                     odds: wearData.odds || 0,
                     image: item.icon || '',
                     rarity: this.mapColorToRarity(item.color || ''),
@@ -54,10 +63,14 @@ const KeyDropParser = {
             });
         });
 
+        // Normalize case price to USD
+        const casePriceInLocalCurrency = rawData.price || 0;
+        const casePriceInUsd = casePriceInLocalCurrency / rate;
+
         return {
             caseId: rawData.id || rawData.slug,
             caseName: rawData.title || 'Unknown Case',
-            casePrice: rawData.price || 0,
+            casePrice: casePriceInUsd,
             items: items
         };
     },

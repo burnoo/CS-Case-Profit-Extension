@@ -136,9 +136,20 @@ class KeyDropAdapter {
         if (!caseSlug) return null;
 
         try {
+            // Get currency and exchange rate
+            const currencyMatch = document.cookie.match(/currency=(\w+)/);
+            const currencyCode = currencyMatch ? currencyMatch[1] : 'USD';
+
+            let exchangeRate = 1;
+            if (currencyCode !== 'USD') {
+                const currencyData = await KeyDropAPI.fetchExchangeRates();
+                exchangeRate = currencyData?.exchangeRate?.[currencyCode] || 1;
+            }
+
             const rawData = await KeyDropAPI.fetchCaseData(caseSlug);
             if (rawData) {
-                return KeyDropParser.transform(rawData);
+                // Pass exchange rate to parser to normalize prices to USD
+                return KeyDropParser.transform(rawData, exchangeRate);
             }
             return null;
         } catch (error) {
@@ -156,8 +167,23 @@ class KeyDropAdapter {
         const currencyMatch = document.cookie.match(/currency=(\w+)/);
         const currencyCode = currencyMatch ? currencyMatch[1] : 'USD';
 
-        // KeyDrop API returns prices in the requested currency via x-currency header
-        // Since we request in the user's currency, rate is 1
+        // If already USD, rate is 1
+        if (currencyCode === 'USD') {
+            return CurrencyService.create(currencyCode, 1);
+        }
+
+        // Fetch exchange rate from KeyDrop API
+        try {
+            const currencyData = await KeyDropAPI.fetchExchangeRates();
+            if (currencyData?.exchangeRate?.[currencyCode]) {
+                const rate = currencyData.exchangeRate[currencyCode];
+                return CurrencyService.create(currencyCode, rate);
+            }
+        } catch (error) {
+            console.error('[KeyDrop Adapter] Error fetching exchange rate:', error);
+        }
+
+        // Fallback: return rate of 1 (prices won't be converted)
         return CurrencyService.create(currencyCode, 1);
     }
 }

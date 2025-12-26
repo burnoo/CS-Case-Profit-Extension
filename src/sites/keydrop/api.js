@@ -47,11 +47,38 @@ const KeyDropAPI = {
     },
 
     /**
+     * Fetch exchange rates from API
+     * @returns {Promise<Object|null>} - Exchange rate data or null on error
+     */
+    async fetchExchangeRates() {
+        try {
+            const lang = this.getLang();
+            const response = await fetch(`/${lang}/apiData/currency`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            const json = await response.json();
+            return json.data || null;
+        } catch (error) {
+            console.error('[KeyDrop API] Error fetching exchange rates:', error);
+            return null;
+        }
+    },
+
+    /**
      * Fetch case data from API
      * @param {string} caseSlug - Case slug (e.g., "crocodilo")
+     * @param {string} [currencyOverride] - Optional currency code to override user preference
      * @returns {Promise<Object|null>} - Case data or null on error
      */
-    async fetchCaseData(caseSlug) {
+    async fetchCaseData(caseSlug, currencyOverride = null) {
         try {
             const token = await this.fetchToken();
             if (!token) {
@@ -59,7 +86,7 @@ const KeyDropAPI = {
             }
 
             const lang = this.getLang();
-            const currency = this.getCurrency();
+            const currency = currencyOverride || this.getCurrency();
             const response = await fetch(`/${lang}/apiData/skins/Cases/getCaseData/${caseSlug}`, {
                 method: 'GET',
                 headers: {
