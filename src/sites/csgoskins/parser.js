@@ -42,21 +42,30 @@ const CSGOSkinsParser = {
         // Use isStattrak from scraper (from chances_table) or from name parsing
         const isStattrak = item.isStattrak || parsed.isStattrak;
 
-        // Build market hash name with StatTrak prefix and wear
+        // Check if item needs ★ prefix (knives/gloves without it)
+        const needsStarPrefix = this.isKnifeOrGloves(item.name) && !item.name.startsWith('★');
+
+        // Build market hash name with proper prefixes
+        let baseName = needsStarPrefix ? `★ ${item.name}` : item.name;
         let marketHashName = '';
         if (isStattrak) {
             // Add StatTrak™ prefix
-            marketHashName = `StatTrak\u2122 ${item.name}`;
+            marketHashName = `StatTrak\u2122 ${baseName}`;
         } else {
-            marketHashName = item.name;
+            marketHashName = baseName;
         }
         if (wearFull && !marketHashName.includes('(')) {
             marketHashName = `${marketHashName} (${wearFull})`;
         }
 
+        // Update weaponName with star prefix if needed
+        const weaponName = needsStarPrefix && !parsed.weaponName.startsWith('★')
+            ? `★ ${parsed.weaponName}`
+            : parsed.weaponName;
+
         return {
             id: item.id,
-            weaponName: parsed.weaponName,
+            weaponName: weaponName,
             skinName: parsed.skinName,
             wear: wear,
             wearFull: wearFull,
@@ -68,6 +77,31 @@ const CSGOSkinsParser = {
             marketHashName: marketHashName,
             phase: parsed.phase
         };
+    },
+
+    /**
+     * Check if item is a knife or gloves (needs ★ prefix)
+     * @param {string} name - Item name
+     * @returns {boolean}
+     */
+    isKnifeOrGloves(name) {
+        if (!name) return false;
+
+        const knifePatterns = [
+            'Bayonet', 'Karambit', 'Butterfly Knife', 'Huntsman Knife',
+            'Flip Knife', 'Gut Knife', 'Falchion Knife', 'Shadow Daggers',
+            'Bowie Knife', 'Navaja Knife', 'Stiletto Knife', 'Talon Knife',
+            'Ursus Knife', 'Classic Knife', 'Paracord Knife', 'Survival Knife',
+            'Nomad Knife', 'Skeleton Knife', 'Kukri Knife'
+        ];
+
+        const glovePatterns = [
+            'Hand Wraps', 'Driver Gloves', 'Moto Gloves', 'Specialist Gloves',
+            'Sport Gloves', 'Hydra Gloves', 'Broken Fang Gloves', 'Bloodhound Gloves'
+        ];
+
+        const allPatterns = [...knifePatterns, ...glovePatterns];
+        return allPatterns.some(pattern => name.includes(pattern));
     },
 
     /**
