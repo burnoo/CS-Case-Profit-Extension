@@ -94,6 +94,18 @@ const PromoBanner = {
         }
 
         try {
+            // Check if site handler has custom applyCode method
+            if (this.siteHandler.applyCode) {
+                const result = await this.siteHandler.applyCode(this.AFFILIATE_CODE);
+                if (result.success) {
+                    this.showFeedback(result.message, 'success');
+                } else {
+                    this.showFeedback(result.message, 'error');
+                }
+                return;
+            }
+
+            // Default implementation
             // Get the promo input field
             const input = this.siteHandler.getPromoInput();
             if (!input) {

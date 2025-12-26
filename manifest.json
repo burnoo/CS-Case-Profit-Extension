@@ -101,9 +101,11 @@
                 "src/shared/services/pricing.js",
                 "src/shared/ui/templates.js",
                 "src/shared/ui/ProbabilityBox.js",
+                "src/shared/ui/PromoBanner.js",
                 "src/sites/datdrop/parser.js",
                 "src/sites/datdrop/api.js",
                 "src/sites/datdrop/index.js",
+                "src/sites/datdrop/promo.js",
                 "src/content.js"
             ],
             "css": [
