@@ -50,8 +50,13 @@
         const adapter = new AdapterClass();
         const box = new ProbabilityBox(adapter);
 
-        // Initialize
+        // Initialize probability box
         box.init();
+
+        // Initialize promo banner if available
+        if (window.PromoBanner) {
+            window.PromoBanner.init();
+        }
     }
 
     // Start when DOM is ready

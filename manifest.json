@@ -55,9 +55,11 @@
                 "src/shared/services/pricing.js",
                 "src/shared/ui/templates.js",
                 "src/shared/ui/ProbabilityBox.js",
+                "src/shared/ui/PromoBanner.js",
                 "src/sites/hellcase/parser.js",
                 "src/sites/hellcase/api.js",
                 "src/sites/hellcase/index.js",
+                "src/sites/hellcase/promo.js",
                 "src/content.js"
             ],
             "css": [

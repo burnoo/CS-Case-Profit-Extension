@@ -401,3 +401,195 @@
     background: rgba(255, 255, 255, 0.2);
     color: #fff;
 }
+
+/* ================================
+   Promo Banner Styles
+   ================================ */
+
+#cscaseprofit-promo-banner {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 215, 0, 0.1);
+}
+
+#cscaseprofit-promo-banner.cscaseprofit-promo-fixed {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 600px;
+    width: calc(100% - 40px);
+}
+
+.cscaseprofit-promo-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.cscaseprofit-promo-icon {
+    color: #ffd700;
+    flex-shrink: 0;
+}
+
+.cscaseprofit-promo-icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+.cscaseprofit-promo-text {
+    flex: 1;
+    min-width: 200px;
+}
+
+.cscaseprofit-promo-message {
+    color: #e0e0e0;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.cscaseprofit-promo-name {
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.cscaseprofit-promo-thanks {
+    color: #4ade80;
+    font-weight: 700;
+    font-size: 15px;
+    margin-left: 4px;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.cscaseprofit-emoji {
+    display: inline-block;
+    font-size: 1.5em;
+    animation: cscaseprofit-plead 2.5s ease-in-out infinite;
+}
+
+.cscaseprofit-emoji:first-child {
+    animation-delay: 0s;
+}
+
+.cscaseprofit-emoji:last-child {
+    animation-delay: 1.25s;
+}
+
+@keyframes cscaseprofit-plead {
+    0%, 100% {
+        transform: rotate(0deg) scale(1) translateY(0);
+    }
+    25% {
+        transform: rotate(-5deg) scale(1.08) translateY(-1px);
+    }
+    50% {
+        transform: rotate(0deg) scale(1.05) translateY(1px);
+    }
+    75% {
+        transform: rotate(5deg) scale(1.08) translateY(-1px);
+    }
+}
+
+.cscaseprofit-promo-code {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.cscaseprofit-code-label {
+    color: #9ca3af;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.cscaseprofit-code-value {
+    color: #ffd700;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.cscaseprofit-promo-apply-btn {
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #1a1a2e;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+    min-width: 110px;
+    text-align: center;
+}
+
+.cscaseprofit-promo-apply-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+}
+
+.cscaseprofit-promo-apply-btn:active {
+    transform: scale(0.98);
+}
+
+.cscaseprofit-promo-apply-btn.feedback-success {
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+}
+
+.cscaseprofit-promo-apply-btn.feedback-error {
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+}
+
+.cscaseprofit-promo-apply-btn.feedback-info {
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+}
+
+.cscaseprofit-promo-close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.cscaseprofit-promo-close:hover {
+    color: #f87171;
+}
+
+.cscaseprofit-promo-close svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 500px) {
+    .cscaseprofit-promo-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .cscaseprofit-promo-text {
+        min-width: auto;
+    }
+}
