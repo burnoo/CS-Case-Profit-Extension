@@ -239,14 +239,24 @@ const CSGO500Parser = {
      * @returns {string}
      */
     buildMarketHashName(weaponName, skinName, exterior, isStattrak, phase) {
-        const prefix = isStattrak ? 'StatTrak™ ' : '';
+        // Handle ★ prefix for knives/gloves - it must come before StatTrak™
+        // Correct format: "★ StatTrak™ Weapon | Skin (Wear) Phase"
+        let starPrefix = '';
+        let cleanWeaponName = weaponName;
+
+        if (weaponName.startsWith('★ ')) {
+            starPrefix = '★ ';
+            cleanWeaponName = weaponName.substring(2);
+        }
+
+        const stattrakPrefix = isStattrak ? 'StatTrak™ ' : '';
 
         // Handle vanilla items (no skin name)
         if (!skinName) {
-            return `${prefix}${weaponName}`;
+            return `${starPrefix}${stattrakPrefix}${cleanWeaponName}`;
         }
 
-        let hashName = `${prefix}${weaponName} | ${skinName}`;
+        let hashName = `${starPrefix}${stattrakPrefix}${cleanWeaponName} | ${skinName}`;
 
         if (exterior) {
             hashName = `${hashName} (${exterior})`;

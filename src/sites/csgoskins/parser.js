@@ -53,14 +53,11 @@ const CSGOSkinsParser = {
         }
 
         // Build market hash name with proper prefixes
-        let baseName = needsStarPrefix ? `★ ${nameWithoutPhase}` : nameWithoutPhase;
-        let marketHashName = '';
-        if (isStattrak) {
-            // Add StatTrak™ prefix
-            marketHashName = `StatTrak\u2122 ${baseName}`;
-        } else {
-            marketHashName = baseName;
-        }
+        // Correct format: "★ StatTrak™ Weapon | Skin (Wear) Phase"
+        let starPrefix = needsStarPrefix ? '★ ' : '';
+        let stattrakPrefix = isStattrak ? 'StatTrak\u2122 ' : '';
+        let marketHashName = `${starPrefix}${stattrakPrefix}${nameWithoutPhase}`;
+
         if (wearFull && !marketHashName.includes('(')) {
             marketHashName = `${marketHashName} (${wearFull})`;
         }

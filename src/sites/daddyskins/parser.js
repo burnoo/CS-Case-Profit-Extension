@@ -45,19 +45,29 @@ const DaddySkinsParser = {
         const wearFull = item.quality || '';
         const wearShort = this.getWearShort(wearFull);
 
+        // Extract phase from skin name if Doppler
+        const phase = this.extractPhase(skinName);
+
         // Build market hash name
-        let marketHashName = '';
-        if (isStattrak) {
-            marketHashName = `StatTrak\u2122 ${weaponName} | ${skinName}`;
-        } else {
-            marketHashName = `${weaponName} | ${skinName}`;
+        // Handle ★ prefix for knives/gloves - it must come before StatTrak™
+        // Correct format: "★ StatTrak™ Weapon | Skin (Wear) Phase"
+        let starPrefix = '';
+        let cleanWeaponName = weaponName;
+
+        if (weaponName.startsWith('★ ')) {
+            starPrefix = '★ ';
+            cleanWeaponName = weaponName.substring(2);
         }
+
+        const stattrakPrefix = isStattrak ? 'StatTrak\u2122 ' : '';
+        let marketHashName = `${starPrefix}${stattrakPrefix}${cleanWeaponName} | ${skinName}`;
+
         if (wearFull) {
             marketHashName += ` (${wearFull})`;
         }
-
-        // Extract phase from skin name if Doppler
-        const phase = this.extractPhase(skinName);
+        if (phase) {
+            marketHashName += ` ${phase}`;
+        }
 
         return {
             id: item.id || `daddyskins-${Math.random()}`,

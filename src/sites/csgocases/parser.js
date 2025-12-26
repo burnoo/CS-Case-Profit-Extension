@@ -96,14 +96,24 @@ const CSGOCasesParser = {
         const isStattrak = item.stattrak === '1' || parsed.isStattrak;
 
         // Build market hash name
-        let marketHashName = '';
-        if (isStattrak) {
-            marketHashName = `StatTrak\u2122 ${parsed.weaponName} | ${parsed.skinName}`;
-        } else {
-            marketHashName = `${parsed.weaponName} | ${parsed.skinName}`;
+        // Handle ★ prefix for knives/gloves - it must come before StatTrak™
+        // Correct format: "★ StatTrak™ Weapon | Skin (Wear) Phase"
+        let starPrefix = '';
+        let cleanWeaponName = parsed.weaponName;
+
+        if (parsed.weaponName.startsWith('★ ')) {
+            starPrefix = '★ ';
+            cleanWeaponName = parsed.weaponName.substring(2);
         }
+
+        const stattrakPrefix = isStattrak ? 'StatTrak\u2122 ' : '';
+        let marketHashName = `${starPrefix}${stattrakPrefix}${cleanWeaponName} | ${parsed.skinName}`;
+
         if (wearFull) {
             marketHashName += ` (${wearFull})`;
+        }
+        if (parsed.phase) {
+            marketHashName += ` ${parsed.phase}`;
         }
 
         // Decode steam image URL

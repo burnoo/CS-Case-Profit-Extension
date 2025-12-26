@@ -66,8 +66,18 @@ const HellcaseParser = {
      * @returns {string} - Market hash name
      */
     buildMarketHashName(weaponName, skinName, exterior, isStattrak, phase) {
-        const prefix = isStattrak ? 'StatTrak™ ' : '';
-        let hashName = `${prefix}${weaponName} | ${skinName}`;
+        // Handle ★ prefix for knives/gloves - it must come before StatTrak™
+        // Correct format: "★ StatTrak™ Weapon | Skin (Wear)"
+        let starPrefix = '';
+        let cleanWeaponName = weaponName;
+
+        if (weaponName.startsWith('★ ')) {
+            starPrefix = '★ ';
+            cleanWeaponName = weaponName.substring(2);
+        }
+
+        const stattrakPrefix = isStattrak ? 'StatTrak™ ' : '';
+        let hashName = `${starPrefix}${stattrakPrefix}${cleanWeaponName} | ${skinName}`;
 
         if (exterior) {
             hashName = `${hashName} (${exterior})`;
