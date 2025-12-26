@@ -135,7 +135,12 @@ class CSGOSkinsAdapter {
         const currencyMatch = document.cookie.match(/currency=(\w+)/);
         const currencyCode = currencyMatch ? currencyMatch[1] : 'USD';
 
-        // Get exchange rate from page
+        // For USD, always use rate of 1 (prices on page are already in USD)
+        if (currencyCode === 'USD') {
+            return CurrencyService.create(currencyCode, 1);
+        }
+
+        // Get exchange rate from page for non-USD currencies
         const html = document.documentElement.innerHTML;
         const rateMatch = html.match(/rate:([\d.]+)/);
         const rate = rateMatch ? parseFloat(rateMatch[1]) : 1;

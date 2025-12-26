@@ -20,7 +20,13 @@ const CSGOSkinsAPI = {
         const currencyMatch = document.cookie.match(/currency=(\w+)/);
         const currencyCode = currencyMatch ? currencyMatch[1] : 'USD';
 
-        // Try to find exchange rate in page
+        // For USD, always use rate of 1 (prices on page are already in USD)
+        // The rate in HTML is for converting FROM USD to other currencies
+        if (currencyCode === 'USD') {
+            return { code: currencyCode, rate: 1 };
+        }
+
+        // Try to find exchange rate in page for non-USD currencies
         const html = document.documentElement.innerHTML;
         const rateMatch = html.match(/rate:([\d.]+)/);
         const rate = rateMatch ? parseFloat(rateMatch[1]) : 1;
@@ -56,9 +62,22 @@ const CSGOSkinsAPI = {
             const caseName = document.querySelector('h1')?.innerText?.trim() || 'Unknown Case';
 
             // Extract case price from open button
-            const openButton = Array.from(document.querySelectorAll('button'))
+            // Language-independent: look for button with price pattern or "Open for" text
+            let openButton = Array.from(document.querySelectorAll('button'))
                 .find(b => b.innerText.includes('Open for'));
-            const priceText = openButton?.innerText.match(/Open for\s*([\d,.]+\s*\S+)/)?.[1] || '';
+
+            let priceText = '';
+            if (openButton) {
+                // English: "Open for $2.50"
+                priceText = openButton.innerText.match(/Open for\s*(.+)$/)?.[1]?.trim() || '';
+            } else {
+                // Non-English: find button with price pattern (e.g., "$2.50", "2.50 zł", "2,50 €")
+                openButton = Array.from(document.querySelectorAll('main button, .section--control button'))
+                    .find(b => /[\d,.]+\s*[$€£zł₽¥]|[$€£₽¥]\s*[\d,.]+/.test(b.innerText));
+                if (openButton) {
+                    priceText = openButton.innerText.trim();
+                }
+            }
             const casePrice = this.extractPrice(priceText) / currency.rate;
 
             // Extract items from ContainerGroupedItem elements
