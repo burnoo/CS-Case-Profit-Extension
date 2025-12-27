@@ -2,6 +2,8 @@
 
 A browser extension that displays probability information, real skin market prices, and profit calculations for CS2 case opening websites.
 
+![CS Case Profit Extension Screenshot](docs/screen.png)
+
 ## Features
 
 - **Real-Time Profit Analysis**: See expected value (EV) and profit chance for any case before opening
