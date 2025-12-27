@@ -18,7 +18,7 @@ const Templates = {
                     <div class="csp-stat-value" id="csp-profitability">-</div>
                 </div>
                 <div class="csp-stat-card">
-                    <div class="csp-stat-label">Average Return</div>
+                    <div class="csp-stat-label">Expected Value</div>
                     <div class="csp-stat-value white" id="csp-expected-value">-</div>
                 </div>
                 <div class="csp-stat-card">
