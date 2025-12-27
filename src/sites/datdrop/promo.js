@@ -5,37 +5,82 @@
 
 const DatDropPromoHandler = {
     /**
+     * Get the deposit dialog if open
+     * @returns {HTMLElement|null}
+     */
+    getDialog() {
+        return document.querySelector('div[role="dialog"]');
+    },
+
+    /**
      * Detect if the promo code section is visible on the page
      * @returns {boolean}
      */
     depositDetector() {
-        // Check if "Add promocode" button is visible
-        const addPromoBtn = Array.from(document.querySelectorAll('button')).find(b =>
-            b.textContent.includes('Add promocode')
-        );
-        if (addPromoBtn) {
-            const rect = addPromoBtn.getBoundingClientRect();
-            return rect.width > 0 && rect.height > 0;
-        }
+        const dialog = this.getDialog();
+        if (!dialog) return false;
+
+        // Check if "Add promocode" button exists inside dialog
+        const addPromoBtn = this.getAddPromocodeButton();
+        if (addPromoBtn) return true;
+
+        // Check if promo input exists
+        const input = dialog.querySelector('input[placeholder="Enter promo code"]');
+        if (input) return true;
+
+        // Check if activated promo section exists (div with "Promocode" text)
+        const activatedSection = this.getActivatedPromoSection();
+        if (activatedSection) return true;
+
         return false;
     },
 
     /**
-     * Check if the promo code is already activated
+     * Find the activated promo code section (when another code is active)
+     * @returns {HTMLElement|null}
+     */
+    getActivatedPromoSection() {
+        const dialog = this.getDialog();
+        if (!dialog) return null;
+
+        // Look for div containing exactly "Promocode" text (leaf node, no children with text)
+        const divs = dialog.querySelectorAll('div');
+        for (let i = 0; i < divs.length && i < 100; i++) {
+            const div = divs[i];
+            // Check if this div's direct text (innerHTML without tags) is "Promocode"
+            if (div.childNodes.length === 1 &&
+                div.childNodes[0].nodeType === Node.TEXT_NODE &&
+                div.childNodes[0].textContent?.trim() === 'Promocode') {
+                // Return the parent container (which has the button with code name)
+                return div.parentElement;
+            }
+        }
+        return null;
+    },
+
+    /**
+     * Check if OUR promo code (CSCASEPROFIT) is already activated
      * @returns {boolean}
      */
     isPromoActive() {
+        const dialog = this.getDialog();
+        if (!dialog) return false;
+
         // Check if promo input exists and has our code
-        const input = document.querySelector('input[placeholder="Enter promo code"]');
+        const input = dialog.querySelector('input[placeholder="Enter promo code"]');
         if (input && input.value.toUpperCase() === 'CSCASEPROFIT') {
             return true;
         }
-        // Check page text for activation confirmation
-        const pageText = document.body.textContent;
-        if (pageText.includes('CSCASEPROFIT') &&
-            (pageText.includes('activated') || pageText.includes('applied'))) {
-            return true;
+
+        // Check if activated section shows our code
+        const activatedSection = this.getActivatedPromoSection();
+        if (activatedSection) {
+            const btn = activatedSection.querySelector('button');
+            if (btn && btn.textContent?.toUpperCase().includes('CSCASEPROFIT')) {
+                return true;
+            }
         }
+
         return false;
     },
 
@@ -44,7 +89,9 @@ const DatDropPromoHandler = {
      * @returns {HTMLInputElement|null}
      */
     getPromoInput() {
-        return document.querySelector('input[placeholder="Enter promo code"]');
+        const dialog = this.getDialog();
+        if (!dialog) return null;
+        return dialog.querySelector('input[placeholder="Enter promo code"]');
     },
 
     /**
@@ -52,14 +99,16 @@ const DatDropPromoHandler = {
      * @returns {HTMLButtonElement|null}
      */
     getApplyButton() {
-        // First check if modal is open and has Apply button
-        const applyBtn = Array.from(document.querySelectorAll('button')).find(b =>
-            b.textContent.trim() === 'Apply'
-        );
-        if (applyBtn) {
-            const rect = applyBtn.getBoundingClientRect();
-            if (rect.width > 0 && rect.height > 0) {
-                return applyBtn;
+        const dialog = this.getDialog();
+        if (!dialog) return null;
+
+        const buttons = dialog.querySelectorAll('button');
+        for (const btn of buttons) {
+            if (btn.textContent.trim() === 'Apply') {
+                const rect = btn.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0) {
+                    return btn;
+                }
             }
         }
         return null;
@@ -70,9 +119,16 @@ const DatDropPromoHandler = {
      * @returns {HTMLButtonElement|null}
      */
     getAddPromocodeButton() {
-        return Array.from(document.querySelectorAll('button')).find(b =>
-            b.textContent.includes('Add promocode')
-        );
+        const dialog = this.getDialog();
+        if (!dialog) return null;
+
+        const buttons = dialog.querySelectorAll('button');
+        for (const btn of buttons) {
+            if (btn.textContent.includes('Add promocode')) {
+                return btn;
+            }
+        }
+        return null;
     },
 
     /**
@@ -80,22 +136,35 @@ const DatDropPromoHandler = {
      * @returns {Object|null} - { element, position }
      */
     getInsertionPoint() {
-        // Find the promo section containing "Add promocode" button
+        const dialog = this.getDialog();
+        if (!dialog) return null;
+
+        // First try: Find the promo section containing "Add promocode" button
         const addPromoBtn = this.getAddPromocodeButton();
-        if (!addPromoBtn) return null;
+        if (addPromoBtn) {
+            const promoSection = addPromoBtn.parentElement?.parentElement;
+            if (promoSection) {
+                return { element: promoSection, position: 'after' };
+            }
+        }
 
-        // Get the promo section container
-        const promoSection = addPromoBtn.closest('[class*="_BbBdWmTdRIBS5pqH4Wx2"]') ||
-                             addPromoBtn.closest('[class*="_X2uW4aXmptZImrDigHSb"]') ||
-                             addPromoBtn.parentElement?.parentElement;
+        // Second try: use promo input's parent
+        const input = dialog.querySelector('input[placeholder="Enter promo code"]');
+        if (input) {
+            const section = input.parentElement?.parentElement;
+            if (section) {
+                return { element: section, position: 'after' };
+            }
+        }
 
-        if (promoSection) {
-            // Use parent container for lower placement (avoids overlap with close button)
-            const parentContainer = promoSection.parentElement;
+        // Third try: use activated promo section (go up one more level for proper placement)
+        const activatedSection = this.getActivatedPromoSection();
+        if (activatedSection) {
+            const parentContainer = activatedSection.parentElement;
             if (parentContainer) {
                 return { element: parentContainer, position: 'after' };
             }
-            return { element: promoSection, position: 'after' };
+            return { element: activatedSection, position: 'after' };
         }
 
         return null;
@@ -113,21 +182,30 @@ const DatDropPromoHandler = {
             let input = this.getPromoInput();
 
             if (!input) {
-                // Step 2: Click "Add promocode" to open modal
+                // Step 2a: Try clicking "Add promocode" button
                 const addPromoBtn = this.getAddPromocodeButton();
-                if (!addPromoBtn) {
-                    return { success: false, message: 'Could not find Add promocode button' };
+                if (addPromoBtn) {
+                    addPromoBtn.click();
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    input = this.getPromoInput();
                 }
+            }
 
-                addPromoBtn.click();
-
-                // Wait for modal to open
-                await new Promise(resolve => setTimeout(resolve, 500));
-
-                input = this.getPromoInput();
-                if (!input) {
-                    return { success: false, message: 'Could not find promo code input' };
+            if (!input) {
+                // Step 2b: Try clicking the button in activated promo section
+                const activatedSection = this.getActivatedPromoSection();
+                if (activatedSection) {
+                    const editBtn = activatedSection.querySelector('button');
+                    if (editBtn) {
+                        editBtn.click();
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        input = this.getPromoInput();
+                    }
                 }
+            }
+
+            if (!input) {
+                return { success: false, message: 'Could not find promo code input' };
             }
 
             // Step 3: Fill the input
