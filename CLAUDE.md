@@ -3,6 +3,10 @@
 ## Project Overview
 CS Case Profit is a browser extension that displays probability and profitability information for CS2 case opening websites. It fetches case data from various sites, retrieves real Steam market prices, and calculates expected value, profit chance, and other statistics.
 
+## Project Structure
+- Extension code lives in `extension/` directory
+- Site adapters are in `extension/src/sites/`
+
 ## Architecture
 - **Content Scripts**: Site-specific adapters that extract case data from each supported website
 - **Parsers**: Transform raw API/DOM data into a unified `CaseData` format

@@ -36,7 +36,7 @@ A browser extension that displays probability information, real skin market pric
 
 3. Enable "Developer mode" in the top right corner
 
-4. Click "Load unpacked" and select the cloned folder
+4. Click "Load unpacked" and select the `extension` folder
 
 5. The extension is now installed and active
 
@@ -72,7 +72,7 @@ When you visit a case page on any supported site, the extension:
 
 ### Site Adapters
 
-Each supported site has its own adapter in `src/sites/` containing:
+Each supported site has its own adapter in `extension/src/sites/` containing:
 
 - `parser.js` - Transforms site-specific data into unified format
 - `api.js` - Handles API requests to the site
@@ -88,14 +88,14 @@ Each supported site has its own adapter in `src/sites/` containing:
 
 ### Adding a New Site
 
-1. Create a new folder in `src/sites/yoursite/`
+1. Create a new folder in `extension/src/sites/yoursite/`
 
 2. Implement the required files:
    - `parser.js` - Parse site data to unified format
    - `api.js` - Fetch case data from site
    - `index.js` - Adapter class with required methods
 
-3. Add site to `manifest.json`:
+3. Add site to `extension/manifest.json`:
    - Add URL patterns to `host_permissions`
    - Add content script entry
 
