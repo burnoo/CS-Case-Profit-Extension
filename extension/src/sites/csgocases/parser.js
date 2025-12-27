@@ -84,7 +84,7 @@ const CSGOCasesParser = {
             // Get image from image_file for boost items (they don't have steam_image_file)
             let image = '';
             if (item.image_file) {
-                image = `https://csgocases.com/photos/${item.image_file}`;
+                image = `https://csgocases.com/uploads/gallery/oryginal/${item.image_file}`;
             }
 
             return {
