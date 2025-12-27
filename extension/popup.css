@@ -1,0 +1,127 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #1a1a2e;
+  color: #eaeaea;
+  min-width: 240px;
+}
+
+.popup {
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+}
+
+h1 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.description {
+  font-size: 12px;
+  color: #8b8b8b;
+  margin-bottom: 16px;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #252542;
+  border-radius: 6px;
+  color: #eaeaea;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.link:hover {
+  background: #353560;
+}
+
+.link svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.toggle-checkbox {
+  display: none;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 12px;
+  background: #252542;
+  border-radius: 6px;
+  color: #eaeaea;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.toggle:hover {
+  background: #353560;
+}
+
+.toggle .chevron {
+  transition: transform 0.2s;
+}
+
+.toggle-checkbox:checked + .toggle .chevron {
+  transform: rotate(180deg);
+}
+
+.sites-list {
+  display: none;
+  list-style: none;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #252542;
+  border-radius: 6px;
+}
+
+.toggle-checkbox:checked ~ .sites-list {
+  display: block;
+}
+
+.sites-list li {
+  padding: 4px 0;
+}
+
+.sites-list a {
+  color: #8b8bdb;
+  text-decoration: none;
+  font-size: 12px;
+  transition: color 0.2s;
+}
+
+.sites-list a:hover {
+  color: #ababff;
+}
