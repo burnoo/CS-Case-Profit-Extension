@@ -1,8 +1,16 @@
-# CS Case Profit Extension
+<p align="center">
+  <img src="extension/icons/icon-128.png" width="50" height="50" alt="icon">
+</p>
 
-A browser extension that displays probability information, real skin market prices, and profit calculations for CS2 case opening websites.
+<h1 align="center">CS Case Profit Extension</h1>
 
-![CS Case Profit Extension Screenshot](docs/screen.png)
+<p align="center">
+  A browser extension that displays probability information, real skin market prices, and profit calculations for CS2 case opening websites.
+</p>
+
+<p align="center">
+  <img src="docs/screen.png" alt="CS Case Profit Extension Screenshot">
+</p>
 
 ## Features
 
