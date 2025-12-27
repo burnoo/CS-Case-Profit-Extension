@@ -6,7 +6,12 @@
     "browser_specific_settings": {
         "gecko": {
             "id": "cscaseprofit@burnoo",
-            "strict_min_version": "109.0"
+            "strict_min_version": "109.0",
+            "data_collection_permissions": {
+                "required": [
+                    "none"
+                ]
+            }
         }
     },
     "icons": {
@@ -60,7 +65,9 @@
     ],
     "background": {
         "service_worker": "background.js",
-        "scripts": ["background.js"]
+        "scripts": [
+            "background.js"
+        ]
     },
     "content_scripts": [
         {
@@ -300,8 +307,35 @@
     ],
     "web_accessible_resources": [
         {
-            "resources": ["icons/*"],
-            "matches": ["https://hellcase.com/*", "https://*.hellcase.com/*", "https://skin.club/*", "https://*.skin.club/*", "https://datdrop.com/*", "https://*.datdrop.com/*", "https://key-drop.com/*", "https://*.key-drop.com/*", "https://keydrop.com/*", "https://*.keydrop.com/*", "https://csgoempire.com/*", "https://*.csgoempire.com/*", "https://csgo500.com/*", "https://*.csgo500.com/*", "https://500.casino/*", "https://*.500.casino/*", "https://clash.gg/*", "https://*.clash.gg/*", "https://csgo-skins.com/*", "https://*.csgo-skins.com/*", "https://daddyskins.com/*", "https://*.daddyskins.com/*", "https://csgocases.com/*", "https://*.csgocases.com/*"]
+            "resources": [
+                "icons/*"
+            ],
+            "matches": [
+                "https://hellcase.com/*",
+                "https://*.hellcase.com/*",
+                "https://skin.club/*",
+                "https://*.skin.club/*",
+                "https://datdrop.com/*",
+                "https://*.datdrop.com/*",
+                "https://key-drop.com/*",
+                "https://*.key-drop.com/*",
+                "https://keydrop.com/*",
+                "https://*.keydrop.com/*",
+                "https://csgoempire.com/*",
+                "https://*.csgoempire.com/*",
+                "https://csgo500.com/*",
+                "https://*.csgo500.com/*",
+                "https://500.casino/*",
+                "https://*.500.casino/*",
+                "https://clash.gg/*",
+                "https://*.clash.gg/*",
+                "https://csgo-skins.com/*",
+                "https://*.csgo-skins.com/*",
+                "https://daddyskins.com/*",
+                "https://*.daddyskins.com/*",
+                "https://csgocases.com/*",
+                "https://*.csgocases.com/*"
+            ]
         }
     ]
 }
