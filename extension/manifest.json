@@ -3,6 +3,12 @@
     "name": "CS Case Profit",
     "version": "1.0.0",
     "description": "Shows probability info, real prices, and profit calculations for CS case opening sites",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "cscaseprofit@burnoo",
+            "strict_min_version": "109.0"
+        }
+    },
     "icons": {
         "16": "icons/icon-16.png",
         "48": "icons/icon-48.png",
@@ -53,7 +59,8 @@
         "https://prices.csgotrader.app/*"
     ],
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "scripts": ["background.js"]
     },
     "content_scripts": [
         {
