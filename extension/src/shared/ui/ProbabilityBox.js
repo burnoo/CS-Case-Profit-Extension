@@ -81,7 +81,7 @@ class ProbabilityBox {
 
         this.box = document.createElement('div');
         this.box.id = 'csp-probability-box';
-        this.box.innerHTML = Templates.mainBox();
+        this.box.appendChild(Templates.mainBox());
 
         referenceElement.insertAdjacentElement('afterend', this.box);
 
@@ -117,7 +117,7 @@ class ProbabilityBox {
      */
     async loadData() {
         const container = document.getElementById('csp-items-container');
-        container.innerHTML = Templates.loading('Loading data from API...');
+        container.replaceChildren(Templates.loading('Loading data from API...'));
 
         try {
             // Fetch all data in parallel
@@ -128,7 +128,7 @@ class ProbabilityBox {
             ]);
 
             if (!caseData) {
-                container.innerHTML = Templates.error('Error loading case data');
+                container.replaceChildren(Templates.error('Error loading case data'));
                 return;
             }
 
@@ -142,7 +142,7 @@ class ProbabilityBox {
             this.render();
         } catch (error) {
             console.error('[CSP] Error loading data:', error);
-            container.innerHTML = Templates.error('Error loading data. Try refreshing.');
+            container.replaceChildren(Templates.error('Error loading data. Try refreshing.'));
         }
     }
 
@@ -172,7 +172,7 @@ class ProbabilityBox {
      */
     render() {
         if (!this.caseData || !this.items.length) {
-            document.getElementById('csp-items-container').innerHTML = Templates.error('No item data found');
+            document.getElementById('csp-items-container').replaceChildren(Templates.error('No item data found'));
             return;
         }
 
@@ -268,9 +268,9 @@ class ProbabilityBox {
         else if (hasValidOdds && profitability <= 90) profitColorClass = 'white';
         profitEl.className = 'csp-stat-value ' + profitColorClass;
         if (!hasValidOdds) {
-            profitEl.innerHTML = 'N/A';
+            profitEl.textContent = 'N/A';
         } else {
-            profitEl.innerHTML = casePrice > 0 ? `${profitability.toFixed(1)}%` : 'N/A';
+            profitEl.textContent = casePrice > 0 ? `${profitability.toFixed(1)}%` : 'N/A';
             this.addRealSub(profitEl, hasRealPrices && casePrice > 0, `${real.profitability?.toFixed(1)}%`);
         }
 
@@ -314,7 +314,7 @@ class ProbabilityBox {
         const existing = card.querySelector('.csp-real-price-sub');
         if (existing) existing.remove();
         if (show && value) {
-            el.insertAdjacentHTML('afterend', Templates.tooltipSub(value));
+            el.after(Templates.tooltipSub(value));
         }
     }
 
@@ -327,44 +327,8 @@ class ProbabilityBox {
         // Sort by price descending
         const sortedItems = [...this.items].sort((a, b) => b.price - a.price);
 
-        let tableHTML = Templates.tableHeader();
-
-        sortedItems.forEach((item, idx) => {
-            const profit = item.price - casePrice;
-            const profitClass = profit >= 0 ? 'csp-profit' : 'csp-loss';
-            const rowClass = profit >= 0 ? 'csp-profit-row' : 'csp-loss-row';
-
-            const realPriceDisplay = item.realPrice !== null
-                ? CurrencyService.formatPrice(item.realPrice, this.userCurrency)
-                : '-';
-
-            let realProfitDisplay = '-';
-            let realProfitClass = '';
-            if (item.realPrice !== null && casePrice > 0) {
-                const realProfit = item.realPrice - casePrice;
-                realProfitClass = realProfit >= 0 ? 'csp-profit' : 'csp-loss';
-                realProfitDisplay = CurrencyService.formatProfit(realProfit, this.userCurrency);
-            }
-
-            // Show "?" for odds if not available
-            const oddsDisplay = hasValidOdds ? `${item.odds.toFixed(3)}%` : '?';
-
-            tableHTML += Templates.tableRow({
-                index: idx + 1,
-                itemName: Templates.itemName(item),
-                price: CurrencyService.formatPrice(item.price, this.userCurrency),
-                realPrice: realPriceDisplay,
-                profit: casePrice > 0 ? CurrencyService.formatProfit(profit, this.userCurrency) : '-',
-                realProfit: realProfitDisplay,
-                odds: oddsDisplay,
-                profitClass,
-                realProfitClass,
-                rowClass
-            });
-        });
-
-        tableHTML += Templates.tableFooter();
-        document.getElementById('csp-items-container').innerHTML = tableHTML;
+        const table = Templates.itemsTable(sortedItems, casePrice, hasValidOdds, this.userCurrency);
+        document.getElementById('csp-items-container').replaceChildren(table);
     }
 
     /**

@@ -38,48 +38,128 @@ const PromoBanner = {
     },
 
     /**
+     * Helper to create an element with attributes and children
+     * @param {string} tag - Tag name
+     * @param {Object} attrs - Attributes object
+     * @param {Array|string|Node} children - Child elements or text
+     * @returns {HTMLElement}
+     */
+    createElement(tag, attrs = {}, children = []) {
+        const el = document.createElement(tag);
+
+        for (const [key, value] of Object.entries(attrs)) {
+            if (key === 'className') {
+                el.className = value;
+            } else if (key.startsWith('on') && typeof value === 'function') {
+                el.addEventListener(key.slice(2).toLowerCase(), value);
+            } else {
+                el.setAttribute(key, value);
+            }
+        }
+
+        if (!Array.isArray(children)) {
+            children = [children];
+        }
+
+        for (const child of children) {
+            if (typeof child === 'string') {
+                el.appendChild(document.createTextNode(child));
+            } else if (child instanceof Node) {
+                el.appendChild(child);
+            }
+        }
+
+        return el;
+    },
+
+    /**
+     * Create SVG element with paths
+     * @param {Object} attrs - SVG attributes
+     * @param {Array} paths - Path data strings
+     * @returns {SVGElement}
+     */
+    createSvg(attrs, paths) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        for (const [key, value] of Object.entries(attrs)) {
+            svg.setAttribute(key, value);
+        }
+        for (const pathData of paths) {
+            const path = document.createElementNS('http://www.w3.org/2000/svg', pathData.tag || 'path');
+            for (const [key, value] of Object.entries(pathData)) {
+                if (key !== 'tag') {
+                    path.setAttribute(key, value);
+                }
+            }
+            svg.appendChild(path);
+        }
+        return svg;
+    },
+
+    /**
      * Create the promo banner HTML element
      * @returns {HTMLElement}
      */
     createBanner() {
+        const c = this.createElement.bind(this);
+
         const banner = document.createElement('div');
         banner.id = this.BANNER_ID;
-        banner.innerHTML = `
-            <div class="cscaseprofit-promo-content">
-                <div class="cscaseprofit-promo-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                        <path d="M2 17l10 5 10-5"/>
-                        <path d="M2 12l10 5 10-5"/>
-                    </svg>
-                </div>
-                <div class="cscaseprofit-promo-text">
-                    <span class="cscaseprofit-promo-message">Do you enjoy <span class="cscaseprofit-promo-name">CS Case Profit Extension</span>? Support us by using our affiliate code.</span>
-                    <span class="cscaseprofit-promo-thanks"><span class="cscaseprofit-emoji">🥺</span> Thanks! <span class="cscaseprofit-emoji">🥺</span></span>
-                </div>
-                <div class="cscaseprofit-promo-code">
-                    <span class="cscaseprofit-code-label">Code:</span>
-                    <span class="cscaseprofit-code-value">${this.AFFILIATE_CODE}</span>
-                </div>
-                <button class="cscaseprofit-promo-apply-btn" type="button">
-                    Apply Code
-                </button>
-                <button class="cscaseprofit-promo-close" type="button" aria-label="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-        `;
 
-        // Add event listeners
-        const applyBtn = banner.querySelector('.cscaseprofit-promo-apply-btn');
-        const closeBtn = banner.querySelector('.cscaseprofit-promo-close');
+        const content = c('div', { className: 'cscaseprofit-promo-content' });
 
+        // Icon
+        const iconDiv = c('div', { className: 'cscaseprofit-promo-icon' });
+        iconDiv.appendChild(this.createSvg(
+            { xmlns: 'http://www.w3.org/2000/svg', width: '24', height: '24', viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' },
+            [
+                { d: 'M12 2L2 7l10 5 10-5-10-5z' },
+                { d: 'M2 17l10 5 10-5' },
+                { d: 'M2 12l10 5 10-5' }
+            ]
+        ));
+        content.appendChild(iconDiv);
+
+        // Text
+        const textDiv = c('div', { className: 'cscaseprofit-promo-text' }, [
+            c('span', { className: 'cscaseprofit-promo-message' }, [
+                'Do you enjoy ',
+                c('span', { className: 'cscaseprofit-promo-name' }, 'CS Case Profit Extension'),
+                '? Support us by using our affiliate code.'
+            ]),
+            c('span', { className: 'cscaseprofit-promo-thanks' }, [
+                c('span', { className: 'cscaseprofit-emoji' }, '\uD83E\uDD7A'),
+                ' Thanks! ',
+                c('span', { className: 'cscaseprofit-emoji' }, '\uD83E\uDD7A')
+            ])
+        ]);
+        content.appendChild(textDiv);
+
+        // Code
+        content.appendChild(
+            c('div', { className: 'cscaseprofit-promo-code' }, [
+                c('span', { className: 'cscaseprofit-code-label' }, 'Code:'),
+                c('span', { className: 'cscaseprofit-code-value' }, this.AFFILIATE_CODE)
+            ])
+        );
+
+        // Apply button
+        const applyBtn = c('button', { className: 'cscaseprofit-promo-apply-btn', type: 'button' }, 'Apply Code');
         applyBtn.addEventListener('click', () => this.applyCode());
-        closeBtn.addEventListener('click', () => this.hideBanner());
+        content.appendChild(applyBtn);
 
+        // Close button
+        const closeBtn = c('button', { className: 'cscaseprofit-promo-close', type: 'button', 'aria-label': 'Close' });
+        closeBtn.appendChild(this.createSvg(
+            { xmlns: 'http://www.w3.org/2000/svg', width: '16', height: '16', viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': '2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' },
+            [
+                { tag: 'line', x1: '18', y1: '6', x2: '6', y2: '18' },
+                { tag: 'line', x1: '6', y1: '6', x2: '18', y2: '18' }
+            ]
+        ));
+        closeBtn.addEventListener('click', () => this.hideBanner());
+        content.appendChild(closeBtn);
+
+        banner.appendChild(content);
         return banner;
     },
 
