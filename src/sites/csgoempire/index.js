@@ -187,14 +187,12 @@ class CSGOEmpireAdapter {
         try {
             const currency = localStorage.getItem('currency');
             if (currency) {
-                console.log('[CSGOEmpire] Found currency in localStorage:', currency);
                 return currency.toUpperCase();
             }
         } catch (e) {
             console.error('[CSGOEmpire] Error reading currency from localStorage:', e);
         }
 
-        console.log('[CSGOEmpire] Could not detect currency, defaulting to USD');
         return null;
     }
 

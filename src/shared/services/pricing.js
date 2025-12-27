@@ -23,13 +23,11 @@ const PricingService = {
         // Check storage cache
         const cached = await CacheService.getWithExpiry(this.CACHE_KEY, this.CACHE_DURATION);
         if (!cached.expired && cached.data) {
-            console.log('[CSP Pricing] Using cached CSGOTrader prices');
             this.prices = cached.data;
             return this.prices;
         }
 
         // Fetch fresh data via background script (avoids CORS issues)
-        console.log('[CSP Pricing] Fetching fresh CSGOTrader prices via background...');
         try {
             const result = await chrome.runtime.sendMessage({
                 type: 'FETCH_URL',
@@ -44,7 +42,6 @@ const PricingService = {
 
             // Cache the data
             await CacheService.setWithExpiry(this.CACHE_KEY, this.prices);
-            console.log('[CSP Pricing] CSGOTrader prices cached');
 
             return this.prices;
         } catch (error) {

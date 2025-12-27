@@ -5,7 +5,7 @@
 
 // Extension installed/updated
 chrome.runtime.onInstalled.addListener((details) => {
-    console.log('[CSP Background] Extension installed/updated:', details.reason);
+    // Extension lifecycle event
 });
 
 // Handle messages from content scripts (for future cross-origin requests if needed)
@@ -19,5 +19,3 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true; // Keep channel open for async response
     }
 });
-
-console.log('[CSP Background] Service worker initialized');

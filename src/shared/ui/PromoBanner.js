@@ -20,7 +20,6 @@ const PromoBanner = {
      */
     registerSiteHandler(handler) {
         this.siteHandler = handler;
-        console.log('[PromoBanner] Site handler registered');
     },
 
     /**
@@ -206,7 +205,6 @@ const PromoBanner = {
 
         // Check if promo code is already active on the site
         if (this.siteHandler.isPromoActive && this.siteHandler.isPromoActive()) {
-            console.log('[PromoBanner] Promo code already active, not showing banner');
             return;
         }
 
@@ -231,8 +229,6 @@ const PromoBanner = {
             banner.classList.add('cscaseprofit-promo-fixed');
             document.body.appendChild(banner);
         }
-
-        console.log('[PromoBanner] Banner shown');
     },
 
     /**
@@ -253,11 +249,8 @@ const PromoBanner = {
      */
     init() {
         if (!this.siteHandler) {
-            console.log('[PromoBanner] No site handler registered, skipping init');
             return;
         }
-
-        console.log('[PromoBanner] Initializing');
 
         // Check immediately
         if (this.isDepositPage()) {
@@ -272,7 +265,6 @@ const PromoBanner = {
                     const banner = document.getElementById(this.BANNER_ID);
                     if (banner) {
                         banner.remove();
-                        console.log('[PromoBanner] Promo code activated, hiding banner');
                     }
                     return;
                 }

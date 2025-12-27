@@ -40,11 +40,8 @@
     function init() {
         const AdapterClass = findAdapter();
         if (!AdapterClass) {
-            console.log('[CSP] No adapter found for this site');
             return;
         }
-
-        console.log(`[CSP] Using adapter: ${AdapterClass.getSiteId()}`);
 
         // Create adapter instance and probability box
         const adapter = new AdapterClass();
