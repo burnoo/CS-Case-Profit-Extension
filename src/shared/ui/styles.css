@@ -523,18 +523,19 @@
 }
 
 .cscaseprofit-promo-apply-btn {
-    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
-    border: none;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #1a1a2e;
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    white-space: nowrap;
-    min-width: 110px;
-    text-align: center;
+    background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #1a1a2e !important;
+    cursor: pointer !important;
+    transition: transform 0.2s, box-shadow 0.2s !important;
+    white-space: nowrap !important;
+    min-width: 110px !important;
+    text-align: center !important;
+    box-shadow: none !important;
 }
 
 .cscaseprofit-promo-apply-btn:hover {
@@ -547,15 +548,15 @@
 }
 
 .cscaseprofit-promo-apply-btn.feedback-success {
-    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+    background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%) !important;
 }
 
 .cscaseprofit-promo-apply-btn.feedback-error {
-    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+    background: linear-gradient(135deg, #f87171 0%, #ef4444 100%) !important;
 }
 
 .cscaseprofit-promo-apply-btn.feedback-info {
-    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+    background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important;
 }
 
 .cscaseprofit-promo-close {
