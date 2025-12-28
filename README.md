@@ -9,6 +9,12 @@
 </p>
 
 <p align="center">
+  <a href="https://chromewebstore.google.com/detail/cs-case-profit/bidepihhghofpchgboaolinacgjbabln">
+    <img src="https://img.shields.io/chrome-web-store/v/bidepihhghofpchgboaolinacgjbabln?style=for-the-badge&logo=googlechrome&logoColor=white&label=Chrome%20Web%20Store" alt="Chrome Web Store">
+  </a>
+</p>
+
+<p align="center">
   <img src="docs/screen.png" alt="CS Case Profit Extension Screenshot">
 </p>
 
@@ -35,6 +41,14 @@
 
 ## Installation
 
+### Chrome Web Store
+
+Install directly from the [Chrome Web Store](https://chromewebstore.google.com/detail/cs-case-profit/bidepihhghofpchgboaolinacgjbabln).
+
+### Firefox Add-ons
+
+Coming soon...
+
 ### From Source (Developer Mode)
 
 1. Clone this repository:
@@ -49,10 +63,6 @@
 4. Click "Load unpacked" and select the `extension` folder
 
 5. The extension is now installed and active
-
-### From Chrome Web Store
-
-Coming soon...
 
 ## How It Works
 
